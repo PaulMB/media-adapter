@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ ! -f /usr/local/java/bin/java ]; then
+    echo "Could not find Java7+ binary /usr/local/java/bin/java" > $SYNOPKG_TEMP_LOGFILE
+    exit 1
+fi
+exit 0

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<command-configuration>
+    <work-directory>/tmp</work-directory>
+    <binary>/bin/sh</binary>
+</command-configuration>

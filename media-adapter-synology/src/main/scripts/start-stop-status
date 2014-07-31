@@ -1,0 +1,40 @@
+#!/bin/sh
+
+JETTY_JAVA=/usr/local/java/bin/java
+JETTY_PID=${SYNOPKG_PKGDEST}/var/run/process.pid
+JETTY_LOG=${SYNOPKG_PKGDEST}/var/log/jetty.log
+JETTY_PORT=`cat ${SYNOPKG_PKGDEST}/etc/jetty.conf | sed '/^port */!d; s///;q'`
+
+running() {
+    local PID=`cat "$1" 2>/dev/null` || return 1
+    kill -0 "$PID" 2>/dev/null
+}
+
+case $1 in
+	start)
+	    nohup ${JETTY_JAVA} -Xmx64m -jar ${SYNOPKG_PKGDEST}/lib/jetty-runner.jar --port ${JETTY_PORT} ${SYNOPKG_PKGDEST}/etc/jetty-context.xml > ${JETTY_LOG} 2>&1 &
+	    echo $! > ${JETTY_PID}
+		exit 0
+	;;
+	stop)
+        kill -9 `cat ${JETTY_PID}`
+		exit 0
+	;;
+	status)
+	    if [ -f ${JETTY_PID} ]; then
+            if running ${JETTY_PID}; then
+                exit 0
+            else
+                rm -f ${JETTY_PID}
+                exit 1
+            fi
+        else
+            exit 3
+        fi
+	;;
+	log)
+	    echo ${JETTY_LOG}
+		exit 0
+	;;
+esac
+                                     

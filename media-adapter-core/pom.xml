@@ -1,0 +1,46 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>media-adapter-core</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>media-adapter-core</name>
+    <url>https://github.com/PaulMB</url>
+
+    <parent>
+        <groupId>org.media</groupId>
+        <artifactId>media-adapter</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.matroska</groupId>
+            <artifactId>jebml</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+        	<groupId>com.googlecode.juniversalchardet</groupId>
+        	<artifactId>juniversalchardet</artifactId>
+        	<version>1.0.3</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>citec</id>
+            <name>CIT-EC Maven Repository</name>
+            <url>https://repo.cit-ec.uni-bielefeld.de/content/repositories/public-releases/</url>
+        </repository>
+    </repositories>
+</project>

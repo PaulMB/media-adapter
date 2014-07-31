@@ -1,0 +1,14 @@
+package="${project.artifactId}"
+displayname="Media Adapter"
+version="${project.version}"
+maintainer="${developer.name}"
+description="${project.description}"
+distributor="${developer.name}"
+distributor_url="${project.url}"
+support_url="${project.url}"
+arch="noarch"
+startable="yes"
+firmware="5.0-4447"
+dsmuidir="app"
+dsmappname=Media.Adapter.AppInstance
+

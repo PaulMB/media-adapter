@@ -1,0 +1,9 @@
+#!/bin/sh
+
+ln -s ${SYNOPKG_PKGDEST}/app /usr/syno/synoman/webman/3rdparty/MediaAdapter
+ln -s ${SYNOPKG_PKGDEST}/etc/Media.Adapter.legacy.conf /etc/httpd/sites-enabled/
+mkdir -p ${SYNOPKG_PKGDEST}/lib ${SYNOPKG_PKGDEST}/var/tmp ${SYNOPKG_PKGDEST}/var/log ${SYNOPKG_PKGDEST}/var/run
+chown -R admin.users ${SYNOPKG_PKGDEST}
+# Required to enable mod_proxy
+sleep 5 && /usr/syno/etc.defaults/rc.d/S97apache-sys.sh restart &
+exit 0 

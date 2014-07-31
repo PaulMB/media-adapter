@@ -1,0 +1,12 @@
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+    <Set name="war">/var/packages/MediaAdapter/target/lib/media-adapter-web.war</Set>
+    <Set name="tempDirectory">/var/packages/MediaAdapter/target/var/tmp</Set>
+    <Call name="setAttribute">
+        <Arg>org.eclipse.jetty.server.webapp.WebInfIncludeJarPattern</Arg>
+        <Arg/>
+    </Call>
+    <Call name="setInitParameter">
+        <Arg>media-adapter-configuration</Arg>
+        <Arg>/var/packages/MediaAdapter/target/etc/media-adapter.xml</Arg>
+    </Call>
+</Configure>

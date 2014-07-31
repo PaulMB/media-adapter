@@ -1,0 +1,78 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.media</groupId>
+    <artifactId>media-adapter</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>media-adapter</name>
+    <description>Tool to interact with media containers, typically MKV files. In particular, it may be used add tracks like subtitles to an existing container</description>
+    <url>https://github.com/PaulMB</url>
+
+    <properties>
+        <developer.name>Paul MB</developer.name>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>paul</id>
+            <name>${developer.name}</name>
+            <email>paul.mbiaka@free.fr</email>
+            <url>${project.url}</url>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>media-adapter-core</module>
+        <module>media-adapter-web</module>
+        <module>media-adapter-synology</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.mockito</groupId>
+        	<artifactId>mockito-core</artifactId>
+        	<version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>com.jayway.awaitility</groupId>
+        	<artifactId>awaitility</artifactId>
+        	<version>1.6.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

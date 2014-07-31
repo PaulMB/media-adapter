@@ -1,0 +1,4 @@
+#!/bin/sh
+rm -f /usr/syno/synoman/webman/3rdparty/MediaAdapter
+rm -f /etc/httpd/sites-enabled/Media.Adapter.legacy.conf
+exit 0

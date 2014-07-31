@@ -1,0 +1,44 @@
+[app]
+app_name = "Media Adapter"
+description = ""
+
+[help]
+description = ""
+
+[edit]
+help = "Select a track"
+label = "Track"
+submit = "Sending track"
+select = "Select"
+name = "Name"
+add = "Add"
+close = "Close"
+
+[work]
+menu = "Queue"
+remove = "Remove"
+input = "Input"
+status = "Status"
+message = "Message"
+
+[track]
+title = "Tracks"
+add = "Add"
+name = "Name"
+codec = "Codec"
+language = "Language"
+type = "Type"
+
+[info]
+menu = "Merge"
+input = "Input"
+message = "Select an input file"
+select = "Select"
+title = "Title"
+duration = "Duration"
+load = "Loading"
+merge = "Merge"
+reset = "Reset"
+
+[chooser]
+title = "Input selection"

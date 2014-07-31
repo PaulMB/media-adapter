@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<command-configuration>
+    <binary>/bin/sh</binary>
+    <environment>
+        <variable name="LANG">C</variable>
+        <variable name="LC_ALL">C</variable>
+    </environment>
+    <work-directory>/tmp</work-directory>
+</command-configuration>
