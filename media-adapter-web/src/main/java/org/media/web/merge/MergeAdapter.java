@@ -4,9 +4,9 @@ import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.SseFeature;
 import org.media.container.exception.MediaReadException;
 import org.media.container.exception.MergeCancelException;
+import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
 import org.media.container.exception.MergeStatusException;
-import org.media.container.exception.MergeSubmitException;
 import org.media.container.info.TrackType;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
@@ -46,7 +46,7 @@ public class MergeAdapter {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public MergeInstance create(MergeDescription description) throws MergeSubmitException, MediaReadException {
+	public MergeInstance create(MergeDescription description) throws MergeDefinitionException, MediaReadException {
 		return new MergeInstance(this.getContext().getCollector().addMerge(this.createMergeDefinition(description)));
 	}
 
@@ -93,21 +93,28 @@ public class MergeAdapter {
 		return inputContainer;
 	}
 
-	private MergeDefinition createMergeDefinition(MergeDescription description) throws MergeSubmitException, MediaReadException {
+	private MergeDefinition createMergeDefinition(MergeDescription description) throws MergeDefinitionException, MediaReadException {
 		final File input = this.getInputContainer(description.getInput());
 		final MergeDefinition merge = MergeFactory.merge(input, new File(description.getInput() + '.' + System.currentTimeMillis())).setClustersInMetaSeek(true);
-		final List<TrackDescription> tracks = description.getTracks();
+		final List<TrackDescription> tracks = description.getTracksToAdd();
 		if ( tracks == null ) {
-			throw new MergeSubmitException("no tracks specified");
+			throw new MergeDefinitionException("no tracks to add specified");
 		}
 		for (TrackDescription track : tracks) {
-			merge.addTrack(this.createTrackDefinition(track).setLanguage(track.getLanguage()).setName(track.getName()));
+			merge.addTrack(this.createTrackAdditionDefinition(track).setLanguage(track.getLanguage()).setName(track.getName()));
+		}
+		final List<TrackDescription> tracksToRemove = description.getTracksToRemove();
+		if ( tracksToRemove == null ) {
+			throw new MergeDefinitionException("no tracks to remove specified");
+		}
+		for (TrackDescription track : tracksToRemove) {
+			merge.removeTrack(MergeFactory.trackId(track.getTrackId()));
 		}
 		return merge;
 	}
 
-	private TrackDefinition createTrackDefinition(TrackDescription track) throws MergeSubmitException {
-		final TrackType trackType = this.getTrackType(track.getTrackType());
+	private TrackDefinition createTrackAdditionDefinition(TrackDescription track) throws MergeDefinitionException {
+		final TrackType trackType = TrackType.fromString(track.getTrackType());
 		final File trackPath = new File(track.getPath());
 		switch (trackType) {
 			case SUBTITLE:
@@ -115,17 +122,6 @@ public class MergeAdapter {
 				return MergeFactory.subtitle(trackPath).setCharset(codecId == null ? null : Charset.forName(codecId));
 			default:
 				return MergeFactory.track(trackPath);
-		}
-	}
-
-	private TrackType getTrackType(String trackType) throws MergeSubmitException {
-		if ( trackType == null ) {
-			throw new MergeSubmitException("no track type specified");
-		}
-		try {
-			return TrackType.valueOf(trackType);
-		} catch (IllegalArgumentException e) {
-			throw new MergeSubmitException(e);
 		}
 	}
 }

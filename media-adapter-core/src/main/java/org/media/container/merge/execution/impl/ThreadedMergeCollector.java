@@ -1,9 +1,9 @@
 package org.media.container.merge.execution.impl;
 
 import org.media.container.exception.MergeCancelException;
+import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
 import org.media.container.exception.MergeStatusException;
-import org.media.container.exception.MergeSubmitException;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.execution.Merge;
@@ -50,14 +50,14 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 	//==================================================================================================================
 
 	@Override
-	public Merge addMerge(MergeDefinition definition) throws MergeSubmitException {
+	public Merge addMerge(MergeDefinition definition) throws MergeDefinitionException {
 		final MergeTask merge = new MergeTask(MergeFactory.id(), this, definition, this.executorFactory);
 		this.merges.put(merge.getId(), merge);
 		this.onChange(MergeOperation.CREATE, merge);
 		try {
 			this.executorService.submit(merge);
 		} catch (RejectedExecutionException e) {
-			throw new MergeSubmitException(e);
+			throw new MergeDefinitionException(e);
 		}
 		return merge;
 	}

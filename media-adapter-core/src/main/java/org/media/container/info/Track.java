@@ -2,7 +2,7 @@ package org.media.container.info;
 
 public interface Track {
 
-	long getNumber();
+	TrackId getId();
 
 	String getName();
 

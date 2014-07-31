@@ -8,5 +8,5 @@ public interface Container {
 
 	double getDuration();
 
-	List<Track> getTracks();
+	List<Track> getTracks(TrackFilter filter);
 }

@@ -2,9 +2,9 @@ package org.media.container.merge.execution.impl;
 
 import org.junit.Test;
 import org.media.container.exception.MergeCancelException;
+import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
 import org.media.container.exception.MergeStatusException;
-import org.media.container.exception.MergeSubmitException;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.execution.Merge;
@@ -131,7 +131,7 @@ public class ThreadedMergeCollectorTest {
 		mergeExecutor.release();
 	}
 
-	@Test(expected = MergeSubmitException.class)
+	@Test(expected = MergeDefinitionException.class)
 	public void shouldFailWhenCollectorIsClosed() throws Exception {
 		final MergeCollector collector = collector(executor("test"));
 		collector.close();

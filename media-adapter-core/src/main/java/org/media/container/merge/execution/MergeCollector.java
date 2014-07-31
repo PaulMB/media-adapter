@@ -1,14 +1,14 @@
 package org.media.container.merge.execution;
 
 import org.media.container.exception.MergeCancelException;
+import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
 import org.media.container.exception.MergeStatusException;
-import org.media.container.exception.MergeSubmitException;
 import org.media.container.merge.MergeDefinition;
 
 public interface MergeCollector {
 
-	Merge addMerge(MergeDefinition merge) throws MergeSubmitException;
+	Merge addMerge(MergeDefinition merge) throws MergeDefinitionException;
 
 	Merge[] getMerges();
 

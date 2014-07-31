@@ -5,6 +5,7 @@ import org.media.container.exception.MediaReadException;
 import org.media.container.info.Container;
 import org.media.container.info.ContainerFactory;
 import org.media.container.info.Track;
+import org.media.container.info.TrackFilterFactory;
 import org.media.container.info.TrackType;
 import org.media.container.info.impl.TrackImpl;
 
@@ -32,11 +33,29 @@ public class JEBMLContainerFactoryTest {
 	//==================================================================================================================
 
 	@Test
-	public void testCreate() throws Exception {
+	public void shouldCreateContainer() throws Exception {
 		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
 		assertEquals(5784.0, container.getDuration());
 		assertEquals("The Melancholy of Haruhi Suzumiya: Special Ending", container.getTitle());
-		assertEquals(Arrays.asList(track1, track2, track3, track4, track5), container.getTracks());
+		assertEquals(Arrays.asList(track1, track2, track3, track4, track5), container.getTracks(TrackFilterFactory.all()));
+	}
+
+	@Test
+	public void shouldReturnSubtitles() throws Exception {
+		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
+		assertEquals(Arrays.asList(track3, track4, track5), container.getTracks(TrackFilterFactory.byType(TrackType.SUBTITLE)));
+	}
+
+	@Test
+	public void shouldReturnAudio() throws Exception {
+		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
+		assertEquals(Arrays.asList(track2), container.getTracks(TrackFilterFactory.byType(TrackType.AUDIO)));
+	}
+
+	@Test
+	public void shouldReturnVideo() throws Exception {
+		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
+		assertEquals(Arrays.asList(track1), container.getTracks(TrackFilterFactory.byType(TrackType.VIDEO)));
 	}
 
 	@Test(expected = MediaReadException.class)

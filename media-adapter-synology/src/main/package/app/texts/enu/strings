@@ -11,8 +11,14 @@ label = "Track"
 submit = "Sending track"
 select = "Select"
 name = "Name"
+type = "Type"
 add = "Add"
 close = "Close"
+
+[type]
+subtitle = "Subtitle"
+audio = "Audio"
+video = "Video"
 
 [work]
 menu = "Queue"

@@ -53,6 +53,7 @@ Ext.define('Media.Adapter.TrackStore', {
             autoDestroy: true,
             root: 'tracks',
             fields: [
+                {name: 'trackId',   type: 'string'},
                 {name: 'path',      type: 'string'},
                 {name: 'name',      type: 'string'},
                 {name: 'codecId',   type: 'string'},
@@ -93,7 +94,6 @@ Ext.define('Media.Adapter.MergeForm', {
             width: 'auto',
             readOnly: true,
             allowBlank: false,
-            name: 'track',
             fieldLabel:_MSG('edit', 'label'),
             emptyText: _MSG('edit', 'help')
         });
@@ -101,8 +101,25 @@ Ext.define('Media.Adapter.MergeForm', {
             anchor: '100%',
             width: 'auto',
             allowBlank: false,
-            name: 'name',
             fieldLabel: _MSG('edit', 'name')
+        });
+        this.typeComboBox = new SYNO.ux.ComboBox({
+            anchor: '100%',
+            width: 'auto',
+            allowBlank: false,
+            fieldLabel: _MSG('edit', 'type'),
+            valueField: "value",
+            displayField: "display",
+            value: 'SUBTITLE',
+            store: new Ext.data.ArrayStore({
+                autoDestroy: true,
+                fields: ["display", "value"],
+                data: [
+                    [_MSG("type", "subtitle"), "SUBTITLE"],
+                    [_MSG("type", "audio"), "AUDIO"],
+                    [_MSG("type", "video"), "VIDEO"]
+                ]
+            })
         });
         var configuration = {
             bodyStyle:'padding:5px 5px 0',
@@ -118,7 +135,7 @@ Ext.define('Media.Adapter.MergeForm', {
                         handler: this.onSelectTrackBtnClick
                     }
                 ]
-            }, this.nameField]
+            }, this.nameField, this.typeComboBox]
         };
         this.callParent([configuration]);
     },
@@ -126,7 +143,7 @@ Ext.define('Media.Adapter.MergeForm', {
         return {
             path: this.trackField.getValue(),
             name: this.nameField.getValue(),
-            trackType: 'SUBTITLE'
+            trackType: this.typeComboBox.getValue()
         };
     },
     onSelectTrackBtnClick: function() {
@@ -220,6 +237,7 @@ Ext.define('Media.Adapter.MergeGrid', {
         });
         var configuration = {
             store: new Media.Adapter.MergeStore(),
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: true,
@@ -244,6 +262,11 @@ Ext.define('Media.Adapter.MergeGrid', {
             }
         };
         this.callParent([configuration]);
+        this.appWin.getPageList().getSelectionModel().on('selectionchange', function(model, node) {
+            if ( node.id === 'Media.Adapter.MergeGrid') {
+                me.reloadStatus();
+            }
+        });
         this.onCreate();
     },
     showContextMenu: function(grid, index, event) {
@@ -283,13 +306,12 @@ Ext.define('Media.Adapter.TrackGrid', {
                 text: _MSG('work', 'remove'),
                 handler: function() {
                     var record = me.getSelectionModel().getSelected();
-                    if ( record.localAddition === true ) {
+                    if ( record.mustBeAdded === true ) {
                         me.getStore().remove(record);
                     } else {
-                        record.markForRemoval = true;
+                        record.mustBeRemoved = true;
                         me.getStore().fireEvent('datachanged', me.getStore());
                     }
-                    //TODO
                 }
             }
         });
@@ -302,6 +324,7 @@ Ext.define('Media.Adapter.TrackGrid', {
         });
         var configuration = {
             store: new Media.Adapter.TrackStore(),
+            sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
                     sortable: true,
@@ -316,18 +339,15 @@ Ext.define('Media.Adapter.TrackGrid', {
                 ]
             }),
             viewConfig: {
-                getRowClass: function(record, index, rowParams) {
-                    if (record.localAddition === true) {
-                        rowParams.tstyle += 'background-color:lightgreen;';
-                    } else if ( record.markForRemoval === true ) {
-                        rowParams.tstyle += 'background-color:orange;';
-                    } else {
-                        rowParams.tstyle += 'background-color:white;';
+                getRowClass: function(record) {
+                    if (record.mustBeAdded === true) {
+                        return 'track-addition';
+                    } else if ( record.mustBeRemoved === true ) {
+                        return 'track-deletion';
                     }
                 }
             },
             enableColumnMove: false,
-            //height: 400,
             tbar: toolbar,
             listeners: {
                 rowcontextmenu: this.showContextMenu
@@ -347,7 +367,7 @@ Ext.define('Media.Adapter.TrackGrid', {
         window.show(parent);
         window.on('track_added', function(track) {
             var record = new TrackRecord(track);
-            record.localAddition = true;
+            record.mustBeAdded = true;
             me.getStore().add(record);
             me.fireEvent('track_added', record);
         });
@@ -358,14 +378,29 @@ Ext.define('Media.Adapter.TrackGrid', {
     setInput: function(inputValue) {
         this.input = inputValue;
     },
-    getAddedTracks: function() {
+    getTracksToAdd: function() {
+        return this.getTracksBy(function(record) {
+            return record.mustBeAdded === true;
+        });
+    },
+    getTracksToRemove: function() {
+        return this.getTracksBy(function(record) {
+            return record.mustBeRemoved === true;
+        });
+    },
+    getTracksBy: function(filter) {
         var tracks = [];
         this.getStore().each(function(record) {
-            if ( record.localAddition === true ) {
+            if ( filter(record) === true ) {
                 tracks.push(record.data);
             }
         });
         return tracks;
+    },
+    hasTrackModification: function() {
+        return this.getStore().findBy(function(record) {
+            return record.mustBeAdded === true || record.mustBeRemoved === true;
+        }) !== -1;
     }
 });
 
@@ -408,10 +443,11 @@ Ext.define('Media.Adapter.MainPanel', {
                 me.appWin.setStatusBusy(_MSG('edit', 'submit'));
                 Ext.Ajax.request({
                     method: 'POST',
-                    url: Media.Adapter.URL + 'merge',   //TODO check if local modifications, if not, no submission
+                    url: Media.Adapter.URL + 'merge',
                     jsonData: {
                         input: me.inputField.getValue(),
-                        tracks: me.tracks.getAddedTracks()
+                        tracksToAdd: me.tracks.getTracksToAdd(),
+                        tracksToRemove: me.tracks.getTracksToRemove()
                     },
                     success: function(responseObject) {
                         me.appWin.clearStatusBusy();
@@ -459,9 +495,15 @@ Ext.define('Media.Adapter.MainPanel', {
             buttons: [ this.mergeButton, resetButton]
         };
         this.callParent([configuration]);
-        this.tracks.on('track_added', function() {
-            me.mergeButton.setDisabled(false);
-        });
+        var enableFn = function() {
+            me.enableMergeButton();
+        };
+        this.tracks.getStore().on('add', enableFn);
+        this.tracks.getStore().on('remove', enableFn);
+        this.tracks.getStore().on('datachanged', enableFn);
+    },
+    enableMergeButton: function() {
+        this.mergeButton.setDisabled(!this.tracks.hasTrackModification());
     },
     resetInfo: function() {
         this.durationField.reset();
@@ -501,7 +543,7 @@ Ext.define('Media.Adapter.MainPanel', {
     },
     getInfo: function(path) {
         var me = this;
-        var parentWindow = me.appWin;
+        var parentWindow = me.findAppWindow();
         parentWindow.setStatusBusy({text: _MSG('info', 'load')});
         Ext.Ajax.request({
             method: 'GET',

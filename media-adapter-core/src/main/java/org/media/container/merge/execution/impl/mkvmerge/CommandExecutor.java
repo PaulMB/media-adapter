@@ -4,6 +4,7 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.media.container.info.impl.jebml.JEBMLContainerFactory;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.execution.MergeExecutor;
 import org.media.container.merge.io.CommandConfiguration;
@@ -46,7 +47,7 @@ public class CommandExecutor implements MergeExecutor {
 
 	@Override
 	public void execute() throws IOException {
-		final CommandLine commandLine = new CommandBuilder(definition, configuration.getBinary().toString()).getCommandLine();
+		final CommandLine commandLine = new CommandBuilder(definition, new JEBMLContainerFactory(), configuration.getBinary().toString()).getCommandLine();//TODO
 		try {
 			this.prepareWorkFiles();
 			executor.execute(commandLine, this.configuration.getEnvironment());

@@ -2,6 +2,7 @@ package org.media.web.info;
 
 import org.media.container.info.Container;
 import org.media.container.info.Track;
+import org.media.container.info.TrackFilterFactory;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class ContainerDescription {
 		this.title = container.getTitle();
 		this.duration = container.getDuration();
 		this.tracks = new ArrayList<>();
-		for (Track track : container.getTracks()) {
+		for (Track track : container.getTracks(TrackFilterFactory.all())) {
 			this.tracks.add(new TrackDescription(track));
 		}
 	}

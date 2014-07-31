@@ -1,7 +1,9 @@
 package org.media.container.info.impl;
 
 import org.media.container.info.Track;
+import org.media.container.info.TrackId;
 import org.media.container.info.TrackType;
+import org.media.container.merge.MergeFactory;
 
 public class TrackImpl implements Track {
 
@@ -9,7 +11,7 @@ public class TrackImpl implements Track {
 	// Attributes
 	//==================================================================================================================
 
-	private long number;
+	private TrackId id;
 	private String name;
 	private String codecId;
 	private String language;
@@ -19,12 +21,13 @@ public class TrackImpl implements Track {
 	// Constructors
 	//==================================================================================================================
 
+	@SuppressWarnings("UnusedDeclaration")
 	public TrackImpl() {
 		// Empty
 	}
 
 	public TrackImpl(long number, String name, String codecId, String language, TrackType trackType) {
-		this.number = number;
+		this.id = MergeFactory.trackId(number);
 		this.name = name;
 		this.codecId = codecId;
 		this.language = language;
@@ -36,8 +39,8 @@ public class TrackImpl implements Track {
 	//==================================================================================================================
 
 	@Override
-	public long getNumber() {
-		return number;
+	public TrackId getId() {
+		return id;
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class TrackImpl implements Track {
 
 	@Override
 	public String toString() {
-		return "number=" + number + ", name=" + name + ", codecId=" + codecId + ", language=" + language + ", type=" + trackType;
+		return "id=" + id + ", name=" + name + ", codecId=" + codecId + ", language=" + language + ", type=" + trackType;
 	}
 
 	@Override
@@ -72,8 +75,8 @@ public class TrackImpl implements Track {
 
 		TrackImpl track = (TrackImpl) o;
 
-		if (number != track.number) return false;
 		if (codecId != null ? !codecId.equals(track.codecId) : track.codecId != null) return false;
+		if (id != null ? !id.equals(track.id) : track.id != null) return false;
 		if (language != null ? !language.equals(track.language) : track.language != null) return false;
 		if (name != null ? !name.equals(track.name) : track.name != null) return false;
 		//noinspection RedundantIfStatement
@@ -84,7 +87,7 @@ public class TrackImpl implements Track {
 
 	@Override
 	public int hashCode() {
-		int result = (int) (number ^ (number >>> 32));
+		int result = id != null ? id.hashCode() : 0;
 		result = 31 * result + (name != null ? name.hashCode() : 0);
 		result = 31 * result + (codecId != null ? codecId.hashCode() : 0);
 		result = 31 * result + (language != null ? language.hashCode() : 0);

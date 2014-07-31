@@ -15,14 +15,16 @@ public class MergeDescription {
 	//==================================================================================================================
 
 	private String input;
-	private List<TrackDescription> tracks;
+	private List<TrackDescription> tracksToAdd;
+	private List<TrackDescription> tracksToRemove;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
 	public MergeDescription() {
-		tracks = new ArrayList<>();
+		tracksToAdd = new ArrayList<>();
+		tracksToRemove = new ArrayList<>();
 	}
 
 	public MergeDescription(String input) {
@@ -42,11 +44,19 @@ public class MergeDescription {
 		this.input = input;
 	}
 
-	public List<TrackDescription> getTracks() {
-		return tracks;
+	public List<TrackDescription> getTracksToAdd() {
+		return tracksToAdd;
 	}
 
-	public void setTracks(List<TrackDescription> tracks) {
-		this.tracks = tracks;
+	public void setTracksToAdd(List<TrackDescription> tracks) {
+		this.tracksToAdd = tracks;
+	}
+
+	public List<TrackDescription> getTracksToRemove() {
+		return tracksToRemove;
+	}
+
+	public void setTracksToRemove(List<TrackDescription> tracksToRemove) {
+		this.tracksToRemove = tracksToRemove;
 	}
 }

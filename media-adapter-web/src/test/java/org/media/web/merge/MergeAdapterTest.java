@@ -140,7 +140,7 @@ public class MergeAdapterTest extends JerseyTest {
 		final MergeDescription description = new MergeDescription(container.toString());
 		final TrackDescription trackDescription = new TrackDescription(track.toString());
 		trackDescription.setTrackType("unknown");
-		description.getTracks().add(trackDescription);
+		description.getTracksToAdd().add(trackDescription);
 		final Response merge = target("merge").request().post(Entity.json(description));
 		assertEquals(Response.Status.FORBIDDEN.getStatusCode(), merge.getStatus());
 	}
@@ -150,7 +150,7 @@ public class MergeAdapterTest extends JerseyTest {
 		final MergeDescription description = new MergeDescription("/not_found_here");
 		final TrackDescription trackDescription = new TrackDescription(track.toString());
 		trackDescription.setTrackType(TrackType.SUBTITLE.name());
-		description.getTracks().add(trackDescription);
+		description.getTracksToAdd().add(trackDescription);
 		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), target("merge").request().post(Entity.json(description)).getStatus());
 	}
 
@@ -239,7 +239,7 @@ public class MergeAdapterTest extends JerseyTest {
 		final MergeDescription description = new MergeDescription(container.toString());
 		final TrackDescription trackDescription = new TrackDescription(track.toString());
 		trackDescription.setTrackType(TrackType.SUBTITLE.name());
-		description.getTracks().add(trackDescription);
+		description.getTracksToAdd().add(trackDescription);
 		return target("merge").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(description));
 	}
 

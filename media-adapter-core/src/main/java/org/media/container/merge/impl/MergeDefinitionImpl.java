@@ -1,5 +1,6 @@
 package org.media.container.merge.impl;
 
+import org.media.container.info.TrackId;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.TrackDefinition;
 
@@ -13,7 +14,8 @@ public class MergeDefinitionImpl implements MergeDefinition {
 	// Attributes
 	//==================================================================================================================
 
-	private final List<TrackDefinition> tracks;
+	private final List<TrackDefinition> addedTracks;
+	private final List<TrackId> removedTracks;
 	private final File input;
 	private final File output;
 	private boolean clustersInMetaSeek;
@@ -25,7 +27,8 @@ public class MergeDefinitionImpl implements MergeDefinition {
 	public MergeDefinitionImpl(File input, File output) {
 		this.input = input;
 		this.output = output;
-		this.tracks = new ArrayList<>();
+		this.addedTracks = new ArrayList<>();
+		this.removedTracks = new ArrayList<>();
 		this.clustersInMetaSeek = false;
 	}
 
@@ -35,7 +38,13 @@ public class MergeDefinitionImpl implements MergeDefinition {
 
 	@Override
 	public MergeDefinition addTrack(TrackDefinition track) {
-		tracks.add(track);
+		addedTracks.add(track);
+		return this;
+	}
+
+	@Override
+	public MergeDefinition removeTrack(TrackId track) {
+		removedTracks.add(track);
 		return this;
 	}
 
@@ -46,8 +55,13 @@ public class MergeDefinitionImpl implements MergeDefinition {
 	}
 
 	@Override
-	public TrackDefinition[] getTracks() {
-		return tracks.toArray(new TrackDefinition[tracks.size()]);
+	public List<TrackDefinition> getAddedTracks() {
+		return addedTracks;
+	}
+
+	@Override
+	public List<TrackId> getRemovedTracks() {
+		return removedTracks;
 	}
 
 	@Override

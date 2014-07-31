@@ -1,7 +1,7 @@
-.x-grid3-row-track-addition {
-    background-color: lightgreen;
+.syno-ux-gridpanel .x-grid3-row.x-grid3-row-selected.track-addition, .syno-ux-gridpanel .x-grid3-row.track-addition {
+    background-color: lightgreen !important;
 }
 
-.x-grid3-row-track-deletion {
-    background-color: orange;
+.syno-ux-gridpanel .x-grid3-row.x-grid3-row-selected.track-deletion, .syno-ux-gridpanel .x-grid3-row.track-deletion {
+    background-color: orange !important;
 }

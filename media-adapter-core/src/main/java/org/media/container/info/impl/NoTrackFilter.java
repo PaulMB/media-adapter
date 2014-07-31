@@ -1,22 +1,22 @@
-package org.media.container.exception;
+package org.media.container.info.impl;
 
-public class MergeSubmitException extends Exception {
+import org.media.container.info.Track;
+import org.media.container.info.TrackFilter;
+
+public class NoTrackFilter implements TrackFilter {
 
 	//==================================================================================================================
 	// Constants
 	//==================================================================================================================
 
-	private static final long serialVersionUID = 5220487789223862411L;
+	public static TrackFilter instance = new NoTrackFilter();
 
 	//==================================================================================================================
-	// Constructors
+	// Public methods
 	//==================================================================================================================
 
-	public MergeSubmitException(Throwable cause) {
-		super(cause.getMessage(), cause);
-	}
-
-	public MergeSubmitException(String message) {
-		super(message);
+	@Override
+	public boolean accept(Track track) {
+		return true;
 	}
 }
