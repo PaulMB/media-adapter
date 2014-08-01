@@ -42,7 +42,7 @@ public class CommandTrackBuilder implements TrackDefinitionVisitor {
 		final Charset charset = this.getCharset(definition);
 		if ( charset != null ) {
 			commandLine.addArgument("--sub-charset ");
-			commandLine.addArgument(trackId + ":" + charset.toString());
+			commandLine.addArgument(trackId + ":" + charset.toString(), false);
 		}
 	}
 
@@ -51,16 +51,15 @@ public class CommandTrackBuilder implements TrackDefinitionVisitor {
 	//==================================================================================================================
 
 	private void visitDefinition(TrackDefinition definition) {
-		//TODO check quoting
 		final String language = definition.getLanguage();
 		if ( language != null ) {
 			commandLine.addArgument("--language");
-			commandLine.addArgument(trackId + ":" + language);
+			commandLine.addArgument(trackId + ":" + language, false);
 		}
 		final String name = definition.getName();
 		if( name != null ) {
 			commandLine.addArgument("--track-name");
-			commandLine.addArgument(trackId + ":" + name);
+			commandLine.addArgument(trackId + ":" + name, false);
 		}
 		commandLine.addArgument(definition.getFile().getAbsolutePath(), false);
 	}

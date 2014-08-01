@@ -1,6 +1,6 @@
 [app]
-app_name = "Media Adapter"
-description = ""
+app_name = "${project.displayName}"
+description = "${project.description}"
 
 [help]
 description = ""

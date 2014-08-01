@@ -1,0 +1,63 @@
+{
+    "adapter.js": {
+        "Media.adapter.AppInstance": {
+            "type": "app",
+            "title": "app:app_name",
+            "version": "${project.version}",
+            "icon": "images/media{0}.png",
+            "texts": "texts",
+            "allowMultiInstance": false,
+            "appWindow": "Media.adapter.AppWindow",
+            "depend": [
+                "Media.adapter.AppWindow",
+                "Media.adapter.util.AppUtil"
+            ]
+        },
+        "Media.adapter.AppWindow": {
+            "type": "lib",
+            "title": "app:app_name",
+            "icon": "images/media{0}.png",
+            "texts": "texts",
+            "depend":[
+                "Media.adapter.form.MainPanel",
+                "Media.adapter.grid.MergeGrid",
+                "Media.adapter.util.AppUtil"
+            ]
+        },
+        "Media.adapter.form.MainPanel":{
+            "depend":[
+                "Media.adapter.grid.TrackGrid",
+                "Media.adapter.util.AppUtil",
+                "SYNO.SDS.Utils.FileChooser"
+            ]
+        },
+        "Media.adapter.grid.MergeGrid":{
+            "depend":[
+                "Media.adapter.util.AppUtil",
+                "Media.adapter.store.MergeStore"
+            ]
+        },
+        "Media.adapter.grid.TrackGrid":{
+            "depend":[
+                "Media.adapter.util.AppUtil",
+                "Media.adapter.store.TrackStore",
+                "Media.adapter.window.AddTrackWindow"
+            ]
+        },
+        "Media.adapter.window.AddTrackWindow":{
+            "depend":[
+                "Media.adapter.util.AppUtil",
+                "Media.adapter.form.MergeForm"
+            ]
+        },
+        "Media.adapter.form.MergeForm":{
+            "depend":[
+                "Media.adapter.util.AppUtil",
+                "SYNO.SDS.Utils.FileChooser"
+            ]
+        },
+        "Media.adapter.store.TrackStore":{ "depend":[] },
+        "Media.adapter.store.MergeStore":{ "depend":[] },
+        "Media.adapter.util.AppUtil":{ "depend":[] }
+    }
+}

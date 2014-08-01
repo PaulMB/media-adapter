@@ -15,15 +15,46 @@
             </includes>
         </fileSet>
         <fileSet>
+            <directory>${project.basedir}/src/main/webapp</directory>
+            <outputDirectory>/app</outputDirectory>
+            <includes>
+                <include>help/**/*</include>
+                <include>images/**/*</include>
+                <include>*.conf</include>
+            </includes>
+            <useDefaultExcludes>true</useDefaultExcludes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/webapp</directory>
+            <outputDirectory>/app</outputDirectory>
+            <includes>
+                <include>config</include>
+                <include>texts/**/*</include>
+            </includes>
+            <filtered>true</filtered>
+            <useDefaultExcludes>true</useDefaultExcludes>
+        </fileSet>
+        <fileSet>
             <directory>${project.basedir}/src/main/package</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*</include>
             </includes>
-            <fileMode>0755</fileMode>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>target/${project.artifactId}-${project.version}/minify/adapter.min.js</source>
+            <outputDirectory>/app</outputDirectory>
+            <destName>adapter.js</destName>
+        </file>
+        <file>
+            <source>target/${project.artifactId}-${project.version}/minify/style.min.css</source>
+            <outputDirectory>/app</outputDirectory>
+            <destName>style.css</destName>
+        </file>
+    </files>
     <dependencySets>
         <dependencySet>
             <outputDirectory>lib</outputDirectory>

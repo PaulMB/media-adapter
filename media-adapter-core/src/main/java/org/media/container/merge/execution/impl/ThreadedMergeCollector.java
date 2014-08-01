@@ -40,9 +40,9 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 
 	public ThreadedMergeCollector(MergeExecutorFactory executorFactory) {
 		this.executorFactory = executorFactory;
-		this.listeners = new ArrayList<MergeListener>();
+		this.listeners = new ArrayList<>();
 		this.executorService = Executors.newSingleThreadExecutor();
-		this.merges = new LinkedHashMap<MergeId, MergeTask>();
+		this.merges = new LinkedHashMap<>();
 	}
 
 	//==================================================================================================================
@@ -73,7 +73,7 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 		final MergeTask mergeTask = this.getMergeTask(merge);
 		switch ( mergeTask.getStatus() ) {
 			case PENDING:
-				throw new MergeStatusException();
+				throw new MergeStatusException("Can not remove pending task");
 			case RUNNING:
 				mergeTask.cancel();
 			default:

@@ -16,6 +16,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.displayName>Media Adapter</project.displayName>
     </properties>
 
     <dependencies>
@@ -36,6 +37,23 @@
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jslint-maven-plugin</artifactId>
+                <version>1.0.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jslint</goal>
+                        </goals>
+                        <configuration>
+                            <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
+                            <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
+                            <sourceJsFolder>src/main/webapp/javascript</sourceJsFolder>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>1.7</version>
                 <executions>
@@ -44,6 +62,36 @@
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>download-licenses</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+               	<artifactId>minify-maven-plugin</artifactId>
+               	<version>1.7.2</version>
+                <executions>
+                    <execution>
+                        <id>default-minify</id>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <!-- minify js -->
+                            <jsSourceDir>javascript</jsSourceDir>
+                            <jsSourceIncludes>
+                                <jsSourceInclude>**/*</jsSourceInclude>
+                            </jsSourceIncludes>
+                            <jsTargetDir>minify</jsTargetDir>
+                            <jsFinalFile>adapter.js</jsFinalFile>
+                            <!-- minify css -->
+                            <cssSourceDir>css</cssSourceDir>
+                            <cssSourceIncludes>
+                                <cssSourceInclude>**/*</cssSourceInclude>
+                            </cssSourceIncludes>
+                            <cssTargetDir>minify</cssTargetDir>
+                            <cssFinalFile>style.css</cssFinalFile>
+                        </configuration>
+                        <goals>
+                            <goal>minify</goal>
                         </goals>
                     </execution>
                 </executions>
