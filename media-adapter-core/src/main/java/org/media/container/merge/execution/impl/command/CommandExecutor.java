@@ -1,18 +1,17 @@
-package org.media.container.merge.execution.impl.mkvmerge;
+package org.media.container.merge.execution.impl.command;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.media.container.info.impl.jebml.JEBMLContainerFactory;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.execution.MergeExecutor;
-import org.media.container.merge.io.CommandConfiguration;
 import org.media.container.merge.io.IOFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Map;
 
 public class CommandExecutor implements MergeExecutor {
 
@@ -24,15 +23,17 @@ public class CommandExecutor implements MergeExecutor {
 	private final DefaultExecutor executor;
 	private final ExecuteWatchdog watchdog;
 	private final MergeDefinition definition;
-	private final CommandConfiguration configuration;
+	private final CommandLineBuilder builder;
+	private final Map<String, String> environment;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
-	public CommandExecutor(MergeDefinition mergeDefinition, CommandConfiguration commandConfiguration) {
-		configuration = commandConfiguration;
+	public CommandExecutor(MergeDefinition mergeDefinition, Map<String, String> commandEnv, CommandLineBuilder commandLineBuilder) {
+		this.environment = commandEnv;
 		definition = mergeDefinition;
+		builder = commandLineBuilder;
 		outputStream = new ByteArrayOutputStream();
 		watchdog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 		executor = new DefaultExecutor();
@@ -47,10 +48,10 @@ public class CommandExecutor implements MergeExecutor {
 
 	@Override
 	public void execute() throws IOException {
-		final CommandLine commandLine = new CommandBuilder(definition, new JEBMLContainerFactory(), configuration.getBinary().toString()).getCommandLine();//TODO
+		final CommandLine commandLine = builder.getCommandLine(definition);
 		try {
 			this.prepareWorkFiles();
-			executor.execute(commandLine, this.configuration.getEnvironment());
+			executor.execute(commandLine, environment);
 		} catch (IOException e) {
 			outputStream.write(e.getMessage().getBytes());
 			Files.deleteIfExists(definition.getOutput().toPath());

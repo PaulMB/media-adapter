@@ -7,9 +7,11 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 import org.media.container.info.ContainerFactory;
+import org.media.container.info.Track;
+import org.media.container.info.TrackId;
 import org.media.container.info.TrackType;
-import org.media.container.info.impl.TrackImpl;
 import org.media.container.info.impl.jebml.JEBMLContainerFactory;
+import org.media.container.merge.MergeFactory;
 import org.media.container.merge.execution.MergeExecutorFactory;
 import org.media.web.authentication.Authenticator;
 import org.media.web.authentication.NoAuthentication;
@@ -29,11 +31,11 @@ public class ContainerInfoTest extends JerseyTest {
 	// Constants
 	//==================================================================================================================
 
-	private static final TrackDescription track1 = new TrackDescription(new TrackImpl(1, "The Melancholy of Haruhi Suzumiya: Special Ending", "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO));
-	private static final TrackDescription track2 = new TrackDescription(new TrackImpl(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO));
-	private static final TrackDescription track3 = new TrackDescription(new TrackImpl(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE));
-	private static final TrackDescription track4 = new TrackDescription(new TrackImpl(4, "Styled ASS (Simple)", "S_TEXT/ASS", null, TrackType.SUBTITLE));
-	private static final TrackDescription track5 = new TrackDescription(new TrackImpl(5, "Plain SRT", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
+	private static final TrackDescription track1 = new TrackDescription(track(1, "The Melancholy of Haruhi Suzumiya: Special Ending", "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO));
+	private static final TrackDescription track2 = new TrackDescription(track(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO));
+	private static final TrackDescription track3 = new TrackDescription(track(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE));
+	private static final TrackDescription track4 = new TrackDescription(track(4, "Styled ASS (Simple)", "S_TEXT/ASS", null, TrackType.SUBTITLE));
+	private static final TrackDescription track5 = new TrackDescription(track(5, "Plain SRT", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
 
 	//==================================================================================================================
 	// Public methods
@@ -80,5 +82,20 @@ public class ContainerInfoTest extends JerseyTest {
 	public void shouldFailIfCorruptedMkv() {
 		final String file = ContainerInfoTest.class.getResource("/corrupted.mkv").getFile();
 		Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), target("info/" + file).request().get().getStatus());
+	}
+
+	//==================================================================================================================
+	// Private methods
+	//==================================================================================================================
+
+	private static Track track(long number, String name, String codecId, String language, TrackType trackType) {
+		final Track track = Mockito.mock(Track.class);
+		final TrackId trackId = MergeFactory.trackId(number);
+		Mockito.when(track.getId()).thenReturn(trackId);
+		Mockito.when(track.getName()).thenReturn(name);
+		Mockito.when(track.getCodecId()).thenReturn(codecId);
+		Mockito.when(track.getLanguage()).thenReturn(language);
+		Mockito.when(track.getType()).thenReturn(trackType);
+		return track;
 	}
 }

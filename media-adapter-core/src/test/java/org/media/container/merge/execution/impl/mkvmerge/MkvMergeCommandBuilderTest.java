@@ -7,19 +7,23 @@ import org.media.container.info.Container;
 import org.media.container.info.ContainerFactory;
 import org.media.container.info.Track;
 import org.media.container.info.TrackType;
-import org.media.container.info.impl.ContainerImpl;
-import org.media.container.info.impl.TrackImpl;
+import org.media.container.info.impl.ContainerUtil;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
+import org.media.container.merge.io.CommandConfiguration;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static org.media.container.info.impl.ContainerUtil.track;
 
-public class CommandBuilderTest {
+public class MkvMergeCommandBuilderTest {
 
 	//==================================================================================================================
 	// Public methods
@@ -103,17 +107,20 @@ public class CommandBuilderTest {
 	//==================================================================================================================
 
 	private static void assertCommandEquals(String expected, MergeDefinition definition) throws Exception {
-		assertEquals(CommandLine.parse(expected).toString(), new CommandBuilder(definition, factory()).getCommandLine().toString());
+		final CommandConfiguration configuration = Mockito.mock(CommandConfiguration.class);
+		final Path path = Paths.get("mkvmerge");
+		Mockito.when(configuration.getBinary()).thenReturn(path);
+		assertEquals(CommandLine.parse(expected).toString(), new MkvMergeCommandBuilder(configuration, factory()).getCommandLine(definition).toString());
 	}
 
 	private static ContainerFactory factory() throws MediaReadException {
 		final List<Track> tracks = new ArrayList<>();
-		tracks.add(new TrackImpl(1, null, "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO));
-		tracks.add(new TrackImpl(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO));
-		tracks.add(new TrackImpl(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE));
-		tracks.add(new TrackImpl(4, "Srt", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
-		tracks.add(new TrackImpl(5, "2nd Srt", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
-		final ContainerImpl container = new ContainerImpl("", 0L, tracks);
+		tracks.add(track(1, null, "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO));
+		tracks.add(track(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO));
+		tracks.add(track(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE));
+		tracks.add(track(4, "Srt", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
+		tracks.add(track(5, "2nd Srt", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
+		final Container container = ContainerUtil.container("", 0.0, tracks);
 		return new ContainerFactory() {
 			@Override
 			public Container create(URI containerURI) throws MediaReadException {

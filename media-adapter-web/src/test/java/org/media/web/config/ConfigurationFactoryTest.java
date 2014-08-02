@@ -1,7 +1,7 @@
 package org.media.web.config;
 
 import org.junit.Test;
-import org.media.container.merge.execution.impl.mkvmerge.CommandExecutorFactory;
+import org.media.container.merge.execution.impl.mkvmerge.MkvMergeExecutorFactory;
 import org.media.web.authentication.Authenticator;
 import org.media.web.authentication.DSMAuthenticator;
 import org.mockito.Mockito;
@@ -21,7 +21,7 @@ public class ConfigurationFactoryTest {
 	public void shouldLoadConfiguration() throws Exception {
 		final Path source = Paths.get(ConfigurationFactoryTest.class.getResource("/media-adapter.xml").toURI());
 		final ApplicationConfiguration configuration = ConfigurationFactory.loadConfiguration(source);
-		assertEquals(CommandExecutorFactory.class.getName(), configuration.getExecutorFactory().getClassName());
+		assertEquals(MkvMergeExecutorFactory.class.getName(), configuration.getExecutorFactory().getClassName());
 		assertEquals("/var/packages/MediaAdapter/target/etc/mkvmerge.xml", configuration.getExecutorFactory().getConfiguration());
 		assertEquals(DSMAuthenticator.class.getName(), configuration.getAuthenticator().getClassName());
 		assertEquals("/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml", configuration.getAuthenticator().getConfiguration());

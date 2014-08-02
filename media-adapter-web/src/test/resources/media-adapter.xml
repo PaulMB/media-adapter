@@ -1,5 +1,5 @@
 <media-adapter>
-    <executor-factory class="org.media.container.merge.execution.impl.mkvmerge.CommandExecutorFactory"
+    <executor-factory class="org.media.container.merge.execution.impl.mkvmerge.MkvMergeExecutorFactory"
                       configuration="/var/packages/MediaAdapter/target/etc/mkvmerge.xml"/>
     <authenticator class="org.media.web.authentication.DSMAuthenticator"
                    configuration="/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml"/>

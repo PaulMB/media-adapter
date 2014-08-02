@@ -7,7 +7,6 @@ import org.media.container.info.ContainerFactory;
 import org.media.container.info.Track;
 import org.media.container.info.TrackFilterFactory;
 import org.media.container.info.TrackType;
-import org.media.container.info.impl.TrackImpl;
 
 import java.io.File;
 import java.net.URI;
@@ -15,6 +14,8 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
+import static org.media.container.info.impl.ContainerUtil.assertTrackEquals;
+import static org.media.container.info.impl.ContainerUtil.track;
 
 public class JEBMLContainerFactoryTest {
 
@@ -22,11 +23,11 @@ public class JEBMLContainerFactoryTest {
 	// Constants
 	//==================================================================================================================
 
-	private static final Track track1 = new TrackImpl(1, "The Melancholy of Haruhi Suzumiya: Special Ending", "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO);
-	private static final Track track2 = new TrackImpl(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO);
-	private static final Track track3 = new TrackImpl(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE);
-	private static final Track track4 = new TrackImpl(4, "Styled ASS (Simple)", "S_TEXT/ASS", null, TrackType.SUBTITLE);
-	private static final Track track5 = new TrackImpl(5, "Plain SRT", "S_TEXT/UTF8", null, TrackType.SUBTITLE);
+	private static final Track track1 = track(1, "The Melancholy of Haruhi Suzumiya: Special Ending", "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO);
+	private static final Track track2 = track(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO);
+	private static final Track track3 = track(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE);
+	private static final Track track4 = track(4, "Styled ASS (Simple)", "S_TEXT/ASS", null, TrackType.SUBTITLE);
+	private static final Track track5 = track(5, "Plain SRT", "S_TEXT/UTF8", null, TrackType.SUBTITLE);
 
 	//==================================================================================================================
 	// Public methods
@@ -37,25 +38,25 @@ public class JEBMLContainerFactoryTest {
 		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
 		assertEquals(5784.0, container.getDuration());
 		assertEquals("The Melancholy of Haruhi Suzumiya: Special Ending", container.getTitle());
-		assertEquals(Arrays.asList(track1, track2, track3, track4, track5), container.getTracks(TrackFilterFactory.all()));
+		assertTrackEquals(Arrays.asList(track1, track2, track3, track4, track5), container.getTracks(TrackFilterFactory.all()));
 	}
 
 	@Test
 	public void shouldReturnSubtitles() throws Exception {
 		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
-		assertEquals(Arrays.asList(track3, track4, track5), container.getTracks(TrackFilterFactory.byType(TrackType.SUBTITLE)));
+		assertTrackEquals(Arrays.asList(track3, track4, track5), container.getTracks(TrackFilterFactory.byType(TrackType.SUBTITLE)));
 	}
 
 	@Test
 	public void shouldReturnAudio() throws Exception {
 		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
-		assertEquals(Arrays.asList(track2), container.getTracks(TrackFilterFactory.byType(TrackType.AUDIO)));
+		assertTrackEquals(Arrays.asList(track2), container.getTracks(TrackFilterFactory.byType(TrackType.AUDIO)));
 	}
 
 	@Test
 	public void shouldReturnVideo() throws Exception {
 		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
-		assertEquals(Arrays.asList(track1), container.getTracks(TrackFilterFactory.byType(TrackType.VIDEO)));
+		assertTrackEquals(Arrays.asList(track1), container.getTracks(TrackFilterFactory.byType(TrackType.VIDEO)));
 	}
 
 	@Test(expected = MediaReadException.class)

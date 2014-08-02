@@ -9,7 +9,7 @@ import org.media.container.merge.io.IOFactory;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class CommandTrackBuilder implements TrackDefinitionVisitor {
+public class MkvMergeTrackBuilder implements TrackDefinitionVisitor {
 
 	//==================================================================================================================
 	// Attributes
@@ -22,7 +22,7 @@ public class CommandTrackBuilder implements TrackDefinitionVisitor {
 	// Constructors
 	//==================================================================================================================
 
-	public CommandTrackBuilder(CommandLine commandLine) {
+	public MkvMergeTrackBuilder(CommandLine commandLine) {
 		this.trackId = 0;
 		this.commandLine = commandLine;
 	}

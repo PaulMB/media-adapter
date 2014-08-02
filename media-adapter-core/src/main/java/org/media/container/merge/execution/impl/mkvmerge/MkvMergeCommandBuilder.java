@@ -10,58 +10,56 @@ import org.media.container.info.TrackId;
 import org.media.container.info.TrackType;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.TrackDefinition;
+import org.media.container.merge.execution.impl.command.CommandLineBuilder;
+import org.media.container.merge.io.CommandConfiguration;
 import org.media.container.merge.util.MergeUtil;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
-public class CommandBuilder {
+public class MkvMergeCommandBuilder implements CommandLineBuilder {
 
 	//==================================================================================================================
 	// Attributes
 	//==================================================================================================================
 
-	private final CommandLine commandLine;
-	private final MergeDefinition definition;
-	private final Container container;
+	private final ContainerFactory containerFactory;
+	private final Path binary;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
-	public CommandBuilder(MergeDefinition mergeDefinition, ContainerFactory containerFactory) throws IOException {
-		this(mergeDefinition, containerFactory, "mkvmerge");
-	}
-
-	public CommandBuilder(MergeDefinition mergeDefinition, ContainerFactory factory, String executable) throws IOException {
-		definition = mergeDefinition;
-		commandLine = new CommandLine(executable);
-		try {
-			container = factory.create(mergeDefinition.getInput().toURI());
-			this.createCommandLine();
-		} catch (MediaReadException e) {
-			throw new IOException(e.getMessage(), e);
-		}
+	public MkvMergeCommandBuilder(CommandConfiguration configuration, ContainerFactory factory) {
+		binary = configuration.getBinary();
+		containerFactory = factory;
 	}
 
 	//==================================================================================================================
 	// Public methods
 	//==================================================================================================================
 
-	public CommandLine getCommandLine() {
-		return commandLine;
+	@Override
+	public CommandLine getCommandLine(MergeDefinition definition) throws IOException {
+		try {
+			return this.appendContainerOptions(new CommandLine(binary.toString()), definition);
+		} catch (MediaReadException e) {
+			throw new IOException(e.getMessage(), e);
+		}
 	}
 
 	//==================================================================================================================
 	// Private methods
 	//==================================================================================================================
 
-	private void createCommandLine() throws IOException, MediaReadException {
+	private CommandLine appendContainerOptions(CommandLine commandLine, MergeDefinition definition) throws IOException, MediaReadException {
+		final Container container = containerFactory.create(definition.getInput().toURI());
 		commandLine.addArgument("-o");
 		commandLine.addArgument(definition.getOutput().getAbsolutePath(), false);
-		this.appendTrackRemoval(TrackType.SUBTITLE, "-s", "-S");
-		this.appendTrackRemoval(TrackType.AUDIO, "-a", "-A");
-		this.appendTrackRemoval(TrackType.VIDEO, "-d", "-D");
+		this.appendTrackRemoval(commandLine, container, definition, TrackType.SUBTITLE, "-s", "-S");//TODO
+		this.appendTrackRemoval(commandLine, container, definition, TrackType.AUDIO, "-a", "-A");
+		this.appendTrackRemoval(commandLine, container, definition, TrackType.VIDEO, "-d", "-D");
 		commandLine.addArgument(definition.getInput().getAbsolutePath(), false);
 
 		if ( definition.isClustersInMetaSeek() ) {
@@ -69,11 +67,12 @@ public class CommandBuilder {
 		}
 		final List<TrackDefinition> tracks = definition.getAddedTracks();
 		for (TrackDefinition track : tracks) {
-			track.accept(new CommandTrackBuilder(commandLine));
+			track.accept(new MkvMergeTrackBuilder(commandLine));
 		}
+		return commandLine;
 	}
 
-	private void appendTrackRemoval(TrackType trackType, String removeOption, String removeAllOption) {
+	private void appendTrackRemoval(CommandLine commandLine, Container container, MergeDefinition definition, TrackType trackType, String removeOption, String removeAllOption) {
 		final List<Track> tracks = container.getTracks(TrackFilterFactory.byType(trackType));
 		final List<TrackId> toKeep = MergeUtil.getTracksExcept(tracks, definition.getRemovedTracks());
 		if ( toKeep.isEmpty() ) {

@@ -1,5 +1,7 @@
-package org.media.container.info.impl;
+package org.media.container.info.impl.jebml;
 
+import org.ebml.matroska.MatroskaFile;
+import org.ebml.matroska.MatroskaFileTrack;
 import org.media.container.info.Container;
 import org.media.container.info.Track;
 import org.media.container.info.TrackFilter;
@@ -7,24 +9,26 @@ import org.media.container.info.TrackFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerImpl implements Container {
+public class JEBMLContainer implements Container {
 
 	//==================================================================================================================
 	// Attributes
 	//==================================================================================================================
 
-	private String title;
-	private double duration;
-	private final List<Track> tracks;
+	private final MatroskaFile matroskaFile;
+	private final List<JEBMLTrack> tracks;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
-	public ContainerImpl(final String title, final double duration, final List<Track> tracks) {
-		this.tracks = tracks;
-		this.duration = duration;
-		this.title = title;
+	public JEBMLContainer(MatroskaFile matroskaFile) {
+		this.matroskaFile = matroskaFile;
+		this.tracks = new ArrayList<>();
+		final MatroskaFileTrack[] trackList = matroskaFile.getTrackList();
+		for (MatroskaFileTrack fileTrack : trackList) {
+			this.tracks.add(new JEBMLTrack(fileTrack));
+		}
 	}
 
 	//==================================================================================================================
@@ -33,29 +37,29 @@ public class ContainerImpl implements Container {
 
 	@Override
 	public String getTitle() {
-		return this.title;
+		return this.matroskaFile.getSegmentTitle();
 	}
 
 	@Override
 	public double getDuration() {
-		return this.duration;
+		return this.matroskaFile.getDuration();
 	}
 
 	@Override
 	public List<Track> getTracks(TrackFilter filter) {
-		final List<Track> filtered = new ArrayList<>();
-		for (Track track : tracks) {
+		final List<Track> filteredTracks = new ArrayList<>();
+		for (Track track : this.tracks) {
 			if ( filter.accept(track) ) {
-				filtered.add(track);
+				filteredTracks.add(track);
 			}
 		}
-		return filtered;
+		return filteredTracks;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append("Segment[title=").append(title).append(", duration=").append(duration).append("]\n");
+		builder.append("Segment[title=").append(this.getTitle()).append(", duration=").append(this.getDuration()).append("]\n");
 		for (Track track : tracks) {
 			builder.append("Track[").append(track).append("]\n");
 		}

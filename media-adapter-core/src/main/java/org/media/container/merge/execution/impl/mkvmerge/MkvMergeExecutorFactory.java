@@ -1,16 +1,18 @@
 package org.media.container.merge.execution.impl.mkvmerge;
 
+import org.media.container.info.impl.jebml.JEBMLContainerFactory;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.execution.MergeExecutor;
 import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.container.merge.execution.impl.command.CommandExecutor;
 import org.media.container.merge.io.CommandConfiguration;
 import org.media.container.merge.io.IOFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class CommandExecutorFactory implements MergeExecutorFactory {
+@SuppressWarnings("UnusedDeclaration")
+public class MkvMergeExecutorFactory implements MergeExecutorFactory {
 
 	//==================================================================================================================
 	// Attributes
@@ -22,12 +24,11 @@ public class CommandExecutorFactory implements MergeExecutorFactory {
 	// Constructors
 	//==================================================================================================================
 
-	@SuppressWarnings("UnusedDeclaration")
-	public CommandExecutorFactory(Path configuration) throws IOException {
+	public MkvMergeExecutorFactory(Path configuration) throws IOException {
 		this.configuration = IOFactory.loadConfiguration(configuration);
 	}
 
-	public CommandExecutorFactory(CommandConfiguration configuration) {
+	public MkvMergeExecutorFactory(CommandConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
@@ -37,6 +38,6 @@ public class CommandExecutorFactory implements MergeExecutorFactory {
 
 	@Override
 	public MergeExecutor create(MergeDefinition definition) {
-		return new CommandExecutor(definition, configuration);
+		return new CommandExecutor(definition, configuration.getEnvironment(), new MkvMergeCommandBuilder(configuration, new JEBMLContainerFactory()));
 	}
 }
