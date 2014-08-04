@@ -19,9 +19,10 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 
@@ -30,7 +31,7 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 	//==================================================================================================================
 
 	private final List<MergeListener> listeners;
-	private final ExecutorService executorService;
+	private final ThreadPoolExecutor executorService;
 	private final Map<MergeId, MergeTask> merges;
 	private final MergeExecutorFactory executorFactory;
 
@@ -41,7 +42,7 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 	public ThreadedMergeCollector(MergeExecutorFactory executorFactory) {
 		this.executorFactory = executorFactory;
 		this.listeners = new ArrayList<>();
-		this.executorService = Executors.newSingleThreadExecutor();
+		this.executorService = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 		this.merges = new LinkedHashMap<>();
 	}
 
@@ -55,7 +56,7 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 		this.merges.put(merge.getId(), merge);
 		this.onChange(MergeOperation.CREATE, merge);
 		try {
-			this.executorService.submit(merge);
+			this.executorService.execute(merge);
 		} catch (RejectedExecutionException e) {
 			throw new MergeDefinitionException(e);
 		}
@@ -73,7 +74,11 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 		final MergeTask mergeTask = this.getMergeTask(merge);
 		switch ( mergeTask.getStatus() ) {
 			case PENDING:
-				throw new MergeStatusException("Can not remove pending task");
+				if ( ! this.executorService.remove(mergeTask) ) {
+					throw new MergeCancelException("Could not remove task " + merge);
+				}
+				this.removeMergeTask(mergeTask);
+				break;
 			case RUNNING:
 				mergeTask.cancel();
 			default:

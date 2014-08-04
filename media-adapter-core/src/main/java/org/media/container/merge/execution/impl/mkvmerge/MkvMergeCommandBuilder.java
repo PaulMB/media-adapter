@@ -53,13 +53,14 @@ public class MkvMergeCommandBuilder implements CommandLineBuilder {
 	// Private methods
 	//==================================================================================================================
 
-	private CommandLine appendContainerOptions(CommandLine commandLine, MergeDefinition definition) throws IOException, MediaReadException {
+	private CommandLine appendContainerOptions(CommandLine commandLine, MergeDefinition definition) throws MediaReadException {
 		final Container container = containerFactory.create(definition.getInput().toURI());
 		commandLine.addArgument("-o");
 		commandLine.addArgument(definition.getOutput().getAbsolutePath(), false);
-		this.appendTrackRemoval(commandLine, container, definition, TrackType.SUBTITLE, "-s", "-S");//TODO
-		this.appendTrackRemoval(commandLine, container, definition, TrackType.AUDIO, "-a", "-A");
-		this.appendTrackRemoval(commandLine, container, definition, TrackType.VIDEO, "-d", "-D");
+		final TrackRemovalAppender appender = new TrackRemovalAppender(commandLine, container, definition);
+		appender.appendTrackRemoval(TrackType.SUBTITLE, "-s", "-S");
+		appender.appendTrackRemoval(TrackType.AUDIO, "-a", "-A");
+		appender.appendTrackRemoval(TrackType.VIDEO, "-d", "-D");
 		commandLine.addArgument(definition.getInput().getAbsolutePath(), false);
 
 		if ( definition.isClustersInMetaSeek() ) {
@@ -72,14 +73,30 @@ public class MkvMergeCommandBuilder implements CommandLineBuilder {
 		return commandLine;
 	}
 
-	private void appendTrackRemoval(CommandLine commandLine, Container container, MergeDefinition definition, TrackType trackType, String removeOption, String removeAllOption) {
-		final List<Track> tracks = container.getTracks(TrackFilterFactory.byType(trackType));
-		final List<TrackId> toKeep = MergeUtil.getTracksExcept(tracks, definition.getRemovedTracks());
-		if ( toKeep.isEmpty() ) {
-			commandLine.addArgument(removeAllOption);
-		} else if ( toKeep.size() < tracks.size() ) {
-			commandLine.addArgument(removeOption);
-			commandLine.addArgument(MergeUtil.toString(toKeep));
+	//==================================================================================================================
+	// Private classes
+	//==================================================================================================================
+
+	private class TrackRemovalAppender {
+		private final CommandLine commandLine;
+		private final Container container;
+		private final MergeDefinition definition;
+
+		private TrackRemovalAppender(CommandLine commandLine, Container container, MergeDefinition definition) {
+			this.commandLine = commandLine;
+			this.container = container;
+			this.definition = definition;
+		}
+
+		public void appendTrackRemoval(TrackType trackType, String removeOption, String removeAllOption) {
+			final List<Track> tracks = container.getTracks(TrackFilterFactory.byType(trackType));
+			final List<TrackId> toKeep = MergeUtil.getTracksExcept(tracks, definition.getRemovedTracks());
+			if ( toKeep.isEmpty() ) {
+				commandLine.addArgument(removeAllOption);
+			} else if ( toKeep.size() < tracks.size() ) {
+				commandLine.addArgument(removeOption);
+				commandLine.addArgument(MergeUtil.toString(toKeep));
+			}
 		}
 	}
 }

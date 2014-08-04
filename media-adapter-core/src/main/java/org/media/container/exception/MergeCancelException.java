@@ -15,4 +15,8 @@ public class MergeCancelException extends Exception {
 	public MergeCancelException(String message, Throwable cause) {
 		super(message, cause);
 	}
+
+	public MergeCancelException(String message) {
+		super(message);
+	}
 }

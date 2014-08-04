@@ -87,4 +87,26 @@ public class MergeTask implements Merge, Runnable {
 		status = newStatus;
 		listener.onChange(MergeOperation.UPDATE, this);
 	}
+
+	//==================================================================================================================
+	// Object overriding
+	//==================================================================================================================
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		MergeTask mergeTask = (MergeTask) o;
+
+		//noinspection RedundantIfStatement
+		if (!identifier.equals(mergeTask.identifier)) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return identifier.hashCode();
+	}
 }

@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.media.container.exception.MergeCancelException;
 import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
-import org.media.container.exception.MergeStatusException;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.execution.Merge;
@@ -138,12 +137,14 @@ public class ThreadedMergeCollectorTest {
 		collector.addMerge(definition());
 	}
 
-	@Test(expected = MergeStatusException.class)
+	@Test
 	public void shouldFailOnRemovingPendingMerge() throws Exception {
 		final MergeCollector collector = collector(new WaitMergeExecutor("test1"), executor("test2"));
 		collector.addMerge(definition());
-		collector.addMerge(definition());
-		collector.removeMerge(collector.getMerges()[1].getId());
+		final Merge merge = collector.addMerge(definition());
+		assertEquals(2, collector.getMerges().length);
+		collector.removeMerge(merge.getId());
+		assertEquals(1, collector.getMerges().length);
 	}
 
 	@Test(expected = MergeCancelException.class)
@@ -232,7 +233,7 @@ public class ThreadedMergeCollectorTest {
 
 	private static class SampleListener implements MergeListener {
 
-		private List<MergeEvent> expected = new ArrayList<MergeEvent>();
+		private List<MergeEvent> expected = new ArrayList<>();
 
 		private SampleListener(MergeEvent... expectedEvents) {
 			this.addExpected(expectedEvents);
@@ -294,7 +295,7 @@ public class ThreadedMergeCollectorTest {
 
 	private static class SampleExecutorFactory implements MergeExecutorFactory {
 
-		private final List<MergeExecutor> executors = new ArrayList<MergeExecutor>();
+		private final List<MergeExecutor> executors = new ArrayList<>();
 
 		private SampleExecutorFactory(MergeExecutor... mergeExecutors) {
 			executors.addAll(Arrays.asList(mergeExecutors));
