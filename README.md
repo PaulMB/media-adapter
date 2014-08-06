@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/PaulMB/media-adapter.svg?branch=master)](https://travis-ci.org/PaulMB/media-adapter)
+
 Media Adapter
 ==============
 
