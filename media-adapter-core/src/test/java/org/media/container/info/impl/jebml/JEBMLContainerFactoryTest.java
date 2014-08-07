@@ -1,5 +1,6 @@
 package org.media.container.info.impl.jebml;
 
+import org.ebml.matroska.MatroskaFileTrack;
 import org.junit.Test;
 import org.media.container.exception.MediaReadException;
 import org.media.container.info.Container;
@@ -14,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static org.media.container.info.impl.ContainerUtil.assertTrackEquals;
 import static org.media.container.info.impl.ContainerUtil.track;
 
@@ -36,6 +38,7 @@ public class JEBMLContainerFactoryTest {
 	@Test
 	public void shouldCreateContainer() throws Exception {
 		final Container container = factory().create(this.getResource("/org/media/container/info/impl/jebml/sample.mkv"));
+		assertNotNull(container.toString());
 		assertEquals(5784.0, container.getDuration());
 		assertEquals("The Melancholy of Haruhi Suzumiya: Special Ending", container.getTitle());
 		assertTrackEquals(Arrays.asList(track1, track2, track3, track4, track5), container.getTracks(TrackFilterFactory.all()));
@@ -74,6 +77,31 @@ public class JEBMLContainerFactoryTest {
 		factory().create(this.getResource("/org/media/container/info/impl/jebml/corrupted.mkv"));
 	}
 
+	@Test
+	public void shouldConvertLogoTrack() throws Exception {
+		assertEquals(TrackType.LOGO, new JEBMLTrack(createMkvTrack((byte) 0x10)).getType());
+	}
+
+	@Test
+	public void shouldConvertComplexTrack() throws Exception {
+		assertEquals(TrackType.COMPLEX, new JEBMLTrack(createMkvTrack((byte) 0x03)).getType());
+	}
+
+	@Test
+	public void shouldConvertControlTrack() throws Exception {
+		assertEquals(TrackType.CONTROL, new JEBMLTrack(createMkvTrack((byte) 0x20)).getType());
+	}
+
+	@Test
+	public void shouldConvertButtonTrack() throws Exception {
+		assertEquals(TrackType.BUTTON, new JEBMLTrack(createMkvTrack((byte) 0x12)).getType());
+	}
+
+	@Test(expected = Error.class)
+	public void shouldNotConvertUnknownTrackType() throws Exception {
+		assertEquals(TrackType.BUTTON, new JEBMLTrack(createMkvTrack((byte) 0x00)).getType());
+	}
+
 	//==================================================================================================================
 	// Private methods
 	//==================================================================================================================
@@ -84,5 +112,15 @@ public class JEBMLContainerFactoryTest {
 
 	private URI getResource(String name) throws URISyntaxException {
 		return JEBMLContainerFactoryTest.class.getResource(name).toURI();
+	}
+
+	private static MatroskaFileTrack createMkvTrack(byte type) {
+		final MatroskaFileTrack fileTrack = new MatroskaFileTrack();
+		fileTrack.CodecID = "dummyCodec";
+		fileTrack.Name = "dummyName";
+		fileTrack.Language = "en";
+		fileTrack.TrackNo = 1;
+		fileTrack.TrackType = type;
+		return fileTrack;
 	}
 }

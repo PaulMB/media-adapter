@@ -43,4 +43,9 @@ public class XmlCommandConfigurationTest {
 	public void shouldFailIfMissingBinary() throws Exception {
 		IOFactory.loadConfiguration(Paths.get(XmlCommandConfigurationTest.class.getResource("/org/media/container/merge/io/impl/xml/invalid.config.xml").toURI()));
 	}
+
+	@Test(expected = IOException.class)
+	public void shouldFailIfUnexpectedContent() throws Exception {
+		IOFactory.loadConfiguration(Paths.get(XmlCommandConfigurationTest.class.getResource("/org/media/container/merge/io/impl/xml/corrupted.config.xml").toURI()));
+	}
 }

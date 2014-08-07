@@ -21,11 +21,6 @@ public class XmlEnvironmentVariable {
 		//Empty
 	}
 
-	public XmlEnvironmentVariable(String name, String value) {
-		this.name = name;
-		this.value = value;
-	}
-
 	//==================================================================================================================
 	// Public methods
 	//==================================================================================================================

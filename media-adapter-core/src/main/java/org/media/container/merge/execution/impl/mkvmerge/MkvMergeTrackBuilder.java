@@ -38,12 +38,12 @@ public class MkvMergeTrackBuilder implements TrackDefinitionVisitor {
 
 	@Override
 	public void visit(SubtitleDefinition definition) {
-		this.visitDefinition(definition);
 		final Charset charset = this.getCharset(definition);
 		if ( charset != null ) {
 			commandLine.addArgument("--sub-charset ");
 			commandLine.addArgument(trackId + ":" + charset.toString(), false);
 		}
+		this.visitDefinition(definition);
 	}
 
 	//==================================================================================================================

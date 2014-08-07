@@ -2,14 +2,10 @@ package org.media.container.merge.io.impl;
 
 import org.media.container.merge.io.CommandConfiguration;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -71,13 +67,13 @@ public class XmlCommandConfiguration implements CommandConfiguration {
 	@Override
 	@XmlTransient
 	public Path getBinary() {
-		return binaryPath == null ? null : Paths.get(binaryPath);
+		return this.getBinaryPath() == null ? null : Paths.get(this.getBinaryPath());
 	}
 
 	@Override
 	@XmlTransient
 	public Path getWorkDirectory() {
-		return workDirectoryPath == null ? null : Paths.get(workDirectoryPath);
+		return this.getWorkDirectoryPath() == null ? null : Paths.get(this.getWorkDirectoryPath());
 	}
 
 	@Override

@@ -14,7 +14,9 @@ import org.media.container.merge.io.CommandConfiguration;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -59,8 +61,14 @@ public class MkvMergeCommandBuilderTest {
 	}
 
 	@Test
+	public void shouldReturnCommandLineWithOneSubtitleWithCharset() throws Exception {
+		final MergeDefinition definition = definition().addTrack(MergeFactory.subtitle(new File("/f/g")).setCharset(Charset.forName("UTF-8")));
+		assertCommandEquals("mkvmerge -o /d/e /a/b/c --sub-charset 0:UTF-8 /f/g", definition);
+	}
+
+	@Test
 	public void shouldReturnCommandLineWithTwoTracks() throws Exception {
-		final MergeDefinition definition = definition().addTrack(MergeFactory.track(new File("/f/g"))).addTrack(MergeFactory.track(new File("/h/i")));
+		final MergeDefinition definition = definition().addTrack(MergeFactory.subtitle(new File("/f/g"))).addTrack(MergeFactory.track(new File("/h/i")));
 		assertCommandEquals("mkvmerge -o /d/e /a/b/c /f/g /h/i", definition);
 	}
 
@@ -97,9 +105,20 @@ public class MkvMergeCommandBuilderTest {
 	}
 
 	@Test
-	public void shouldRemoveVidio() throws Exception {
+	public void shouldRemoveVideo() throws Exception {
 		final MergeDefinition definition = definition().removeTrack(MergeFactory.trackId(1));
 		assertCommandEquals("mkvmerge -o /d/e -D /a/b/c", definition);
+	}
+
+	@Test(expected = IOException.class)
+	public void shouldFailIfMediaCanNotBeRead() throws Exception {
+		final MergeDefinition definition = definition().removeTrack(MergeFactory.trackId(1));
+		assertCommandEquals("mkvmerge -o /d/e -D /a/b/c", definition, new ContainerFactory() {
+			@Override
+			public Container create(URI containerURI) throws MediaReadException {
+				throw new MediaReadException("");
+			}
+		});
 	}
 
 	//==================================================================================================================
@@ -107,10 +126,14 @@ public class MkvMergeCommandBuilderTest {
 	//==================================================================================================================
 
 	private static void assertCommandEquals(String expected, MergeDefinition definition) throws Exception {
+		assertCommandEquals(expected, definition, factory());
+	}
+
+	private static void assertCommandEquals(String expected, MergeDefinition definition, ContainerFactory factory) throws Exception {
 		final CommandConfiguration configuration = Mockito.mock(CommandConfiguration.class);
 		final Path path = Paths.get("mkvmerge");
 		Mockito.when(configuration.getBinary()).thenReturn(path);
-		assertEquals(CommandLine.parse(expected).toString(), new MkvMergeCommandBuilder(configuration, factory()).getCommandLine(definition).toString());
+		assertEquals(CommandLine.parse(expected).toString(), new MkvMergeCommandBuilder(configuration, factory).getCommandLine(definition).toString());
 	}
 
 	private static ContainerFactory factory() throws MediaReadException {

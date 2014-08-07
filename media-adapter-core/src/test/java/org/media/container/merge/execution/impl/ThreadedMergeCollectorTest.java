@@ -10,6 +10,7 @@ import org.media.container.merge.execution.Merge;
 import org.media.container.merge.execution.MergeCollector;
 import org.media.container.merge.execution.MergeExecutor;
 import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.container.merge.execution.MergeId;
 import org.media.container.merge.execution.MergeListener;
 import org.media.container.merge.execution.MergeOperation;
 import org.media.container.merge.execution.MergeStatus;
@@ -168,6 +169,14 @@ public class ThreadedMergeCollectorTest {
 	@Test(expected = MergeNotFoundException.class)
 	public void shouldFailWhenRemovingUnknownMerge() throws Exception {
 		collector(executor("test1")).removeMerge(MergeFactory.id());
+	}
+
+	@Test
+	public void shouldReturnEqualForTasksWithSameId() throws Exception {
+		final MergeId id = MergeFactory.id();
+		final MergeTask task1 = new MergeTask(id, null, null, new SampleExecutorFactory(executor("")));
+		final MergeTask task2 = new MergeTask(id, null, null, new SampleExecutorFactory(executor("")));
+		assertEquals(task1, task2);
 	}
 
 	//==================================================================================================================

@@ -31,6 +31,7 @@ public class MergeFactory {
 	public static TrackId trackId(long id) {
 		return new TrackIdImpl(id);
 	}
+
 	public static TrackId trackId(String id) {
 		return new TrackIdImpl(id);
 	}
