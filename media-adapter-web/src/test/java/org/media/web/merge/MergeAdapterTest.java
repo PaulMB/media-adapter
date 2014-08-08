@@ -119,6 +119,24 @@ public class MergeAdapterTest extends JerseyTest {
 	}
 
 	@Test
+	public void shouldAddAndRemoveSubtitle() throws Exception {
+		final List<InboundEvent> events = this.getIncomingEvents();
+		final MergeInstance merge = this.submitMergeWithAddAndRemove().readEntity(MergeInstance.class);
+		final String id = merge.getId();
+		final String input = merge.getInput();
+		assertEquals(container.getFileName().toString(), merge.getInput());
+		waitForEvents(events, 4);
+		assertEventEquals(Arrays.asList(
+				event("merge_create", merge(id, "PENDING", input, "ok")),
+				event("merge_update", merge(id, "RUNNING", input, "ok")),
+				event("merge_update", merge(id, "COMPLETED", input, "ok")),
+				event("merge_delete", merge(id, "COMPLETED", input, "ok"))
+		), events);
+		assertEquals(0, target("merge").request().get(List.class).size());
+		assertTrue(Files.exists(track));
+	}
+
+	@Test
 	public void shouldFailIfMergeCanNotBeExecuted() throws Exception {
 		this.setExecutor(this.createExecutorWithFailure());
 		final List<InboundEvent> events = this.getIncomingEvents();
@@ -133,6 +151,32 @@ public class MergeAdapterTest extends JerseyTest {
 				event("merge_update", merge(id, "ERROR", input, "failed"))
 		), events);
 		assertEquals(1, target("merge").request().get(List.class).size());
+	}
+
+	@Test
+	public void shouldFailIfNoTracksToRemove() throws Exception {
+		final MergeDescription description = new MergeDescription(container.toString());
+		final TrackDescription trackDescription = new TrackDescription(track.toString());
+		trackDescription.setTrackType(TrackType.SUBTITLE.name());
+		description.getTracksToAdd().add(trackDescription);
+		description.setTracksToRemove(null);
+		final Response merge = target("merge").request().post(Entity.json(description));
+		assertEquals(Response.Status.FORBIDDEN.getStatusCode(), merge.getStatus());
+	}
+
+	@Test
+	public void shouldFailIfNoTracksToAdd() throws Exception {
+		final MergeDescription description = new MergeDescription(container.toString());
+		description.setTracksToAdd(null);
+		final Response merge = target("merge").request().post(Entity.json(description));
+		assertEquals(Response.Status.FORBIDDEN.getStatusCode(), merge.getStatus());
+	}
+
+	@Test
+	public void shouldFailIfNoInput() throws Exception {
+		final MergeDescription description = new MergeDescription(null);
+		final Response merge = target("merge").request().post(Entity.json(description));
+		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), merge.getStatus());
 	}
 
 	@Test
@@ -240,6 +284,17 @@ public class MergeAdapterTest extends JerseyTest {
 		final TrackDescription trackDescription = new TrackDescription(track.toString());
 		trackDescription.setTrackType(TrackType.SUBTITLE.name());
 		description.getTracksToAdd().add(trackDescription);
+		return target("merge").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(description));
+	}
+
+	private Response submitMergeWithAddAndRemove() throws IOException {
+		final MergeDescription description = new MergeDescription(container.toString());
+		final TrackDescription trackDescription = new TrackDescription(track.toString());
+		trackDescription.setTrackType(TrackType.SUBTITLE.name());
+		description.getTracksToAdd().add(trackDescription);
+		final TrackDescription trackToRemove = new TrackDescription();
+		trackToRemove.setTrackId("1");
+		description.getTracksToRemove().add(trackToRemove);
 		return target("merge").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(description));
 	}
 

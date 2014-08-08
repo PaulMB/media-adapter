@@ -6,6 +6,7 @@ import org.media.web.authentication.Authenticator;
 import org.media.web.authentication.DSMAuthenticator;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -25,6 +26,12 @@ public class ConfigurationFactoryTest {
 		assertEquals("/var/packages/MediaAdapter/target/etc/mkvmerge.xml", configuration.getExecutorFactory().getConfiguration());
 		assertEquals(DSMAuthenticator.class.getName(), configuration.getAuthenticator().getClassName());
 		assertEquals("/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml", configuration.getAuthenticator().getConfiguration());
+	}
+
+	@Test(expected = IOException.class)
+	public void shouldNotLoadInvalidConfiguration() throws Exception {
+		final Path source = Paths.get(ConfigurationFactoryTest.class.getResource("/invalid.media-adapter.xml").toURI());
+		ConfigurationFactory.loadConfiguration(source);
 	}
 
 	@Test(expected = Exception.class)

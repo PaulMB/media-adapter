@@ -3,6 +3,7 @@ package org.media.web.authentication;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
+import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.media.container.merge.io.CommandConfiguration;
 import org.media.container.merge.io.IOFactory;
@@ -13,18 +14,20 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
-public class DSMAuthenticator implements Authenticator {
+public class DSMAuthenticator implements Authenticator, DSMExecutorFactory {
 
 	//==================================================================================================================
 	// Attributes
 	//==================================================================================================================
 
 	private final CommandConfiguration configuration;
+	private final DSMExecutorFactory executorFactory;
 
 	//==================================================================================================================
 	// Constructors
@@ -32,10 +35,12 @@ public class DSMAuthenticator implements Authenticator {
 
 	public DSMAuthenticator(Path config) throws IOException {
 		this.configuration = IOFactory.loadConfiguration(config);
+		this.executorFactory = this;
 	}
 
-	public DSMAuthenticator(CommandConfiguration configuration) {
+	public DSMAuthenticator(CommandConfiguration configuration, DSMExecutorFactory executorFactory) {
 		this.configuration = configuration;
+		this.executorFactory = executorFactory;
 	}
 
 	//==================================================================================================================
@@ -54,7 +59,7 @@ public class DSMAuthenticator implements Authenticator {
 
 		final CommandLine commandLine = new CommandLine(configuration.getBinary().toString());
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		final DefaultExecutor executor = this.createExecutor(outputStream);
+		final Executor executor = this.executorFactory.createExecutor(outputStream);
 
 		//TODO get environment template from configuration
 		final HashMap<String, String> env = new HashMap<>();
@@ -72,11 +77,7 @@ public class DSMAuthenticator implements Authenticator {
 		}
 	}
 
-	//==================================================================================================================
-	// Private methods
-	//==================================================================================================================
-
-	private DefaultExecutor createExecutor(ByteArrayOutputStream outputStream) {
+	public Executor createExecutor(OutputStream outputStream) {
 		ExecuteWatchdog watchdog = new ExecuteWatchdog(5 * 1000);
 		DefaultExecutor executor = new DefaultExecutor();
 		executor.setExitValue(0);
@@ -84,6 +85,10 @@ public class DSMAuthenticator implements Authenticator {
 		executor.setWatchdog(watchdog);
 		return executor;
 	}
+
+	//==================================================================================================================
+	// Private methods
+	//==================================================================================================================
 
 	private String getHeaderIgnoreCase(ContainerRequestContext requestContext, String headerName) throws AuthenticationException {
 		final MultivaluedMap<String, String> headers = requestContext.getHeaders();

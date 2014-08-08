@@ -84,6 +84,12 @@ public class ContainerInfoTest extends JerseyTest {
 		Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), target("info/" + file).request().get().getStatus());
 	}
 
+	@Test
+	public void shouldDescriptionBeEqual() {
+		Assert.assertEquals(track1, track1);
+		Assert.assertEquals(track1.hashCode(), track1.hashCode());
+	}
+
 	//==================================================================================================================
 	// Private methods
 	//==================================================================================================================

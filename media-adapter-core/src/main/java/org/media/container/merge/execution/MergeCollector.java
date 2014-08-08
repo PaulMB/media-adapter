@@ -3,7 +3,6 @@ package org.media.container.merge.execution;
 import org.media.container.exception.MergeCancelException;
 import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
-import org.media.container.exception.MergeStatusException;
 import org.media.container.merge.MergeDefinition;
 
 public interface MergeCollector {
@@ -12,7 +11,7 @@ public interface MergeCollector {
 
 	Merge[] getMerges();
 
-	void removeMerge(MergeId merge) throws MergeNotFoundException, MergeStatusException, MergeCancelException;
+	void removeMerge(MergeId merge) throws MergeNotFoundException, MergeCancelException;
 
 	void addMergeListener(MergeListener listener);
 

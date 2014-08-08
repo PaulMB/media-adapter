@@ -3,7 +3,6 @@ package org.media.container.merge.execution.impl;
 import org.media.container.exception.MergeCancelException;
 import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
-import org.media.container.exception.MergeStatusException;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.execution.Merge;
@@ -70,7 +69,7 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 	}
 
 	@Override
-	public void removeMerge(MergeId merge) throws MergeNotFoundException, MergeCancelException, MergeStatusException {
+	public void removeMerge(MergeId merge) throws MergeNotFoundException, MergeCancelException {
 		final MergeTask mergeTask = this.getMergeTask(merge);
 		switch ( mergeTask.getStatus() ) {
 			case PENDING:

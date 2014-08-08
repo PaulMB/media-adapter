@@ -6,7 +6,6 @@ import org.media.container.exception.MediaReadException;
 import org.media.container.exception.MergeCancelException;
 import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
-import org.media.container.exception.MergeStatusException;
 import org.media.container.info.TrackType;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
@@ -63,7 +62,7 @@ public class MergeAdapter {
 
 	@DELETE
 	@Path("{id}")
-	public void delete(@PathParam("id") String id) throws MergeNotFoundException, MergeStatusException, MergeCancelException {
+	public void delete(@PathParam("id") String id) throws MergeNotFoundException, MergeCancelException {
 		this.getContext().getCollector().removeMerge(MergeFactory.id(id));
 	}
 
