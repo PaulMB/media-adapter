@@ -22,6 +22,20 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:https://github.com/PaulMB/media-adapter.git</connection>
+        <developerConnection>scm:git:git@github.com:PaulMB/media-adapter.git</developerConnection>
+        <url>https://github.com/PaulMB/media-adapter</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/paulmb/maven/media-adapter</url>
+        </repository>
+    </distributionManagement>
+
     <developers>
         <developer>
             <id>paul</id>
@@ -51,6 +65,15 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
                 </configuration>
             </plugin>
         </plugins>
