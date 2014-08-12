@@ -4,14 +4,14 @@
 
     <artifactId>media-adapter-rest</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <name>media-adapter-rest</name>
     <url>https://github.com/PaulMB</url>
 
     <parent>
         <groupId>org.media</groupId>
         <artifactId>media-adapter</artifactId>
-        <version>0.1</version>
+        <version>0.2-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -107,7 +107,7 @@
         <dependency>
             <groupId>org.media</groupId>
             <artifactId>media-adapter-core</artifactId>
-            <version>0.1</version>
+            <version>0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>

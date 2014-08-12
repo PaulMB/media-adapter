@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>MediaAdapter</artifactId>
-    <version>0.1</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>media-adapter-synology</name>
     <url>https://github.com/PaulMB</url>
@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.media</groupId>
         <artifactId>media-adapter</artifactId>
-        <version>0.1</version>
+        <version>0.2-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.media</groupId>
             <artifactId>media-adapter-rest</artifactId>
-            <version>0.1</version>
+            <version>0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
         	<groupId>javax.servlet</groupId>
