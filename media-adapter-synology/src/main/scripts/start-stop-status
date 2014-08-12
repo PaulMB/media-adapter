@@ -1,9 +1,11 @@
 #!/bin/sh
 
-JETTY_JAVA=/usr/local/java/bin/java
-JETTY_PID=${SYNOPKG_PKGDEST}/var/run/process.pid
-JETTY_LOG=${SYNOPKG_PKGDEST}/var/log/jetty.log
-JETTY_PORT=`cat ${SYNOPKG_PKGDEST}/etc/jetty.conf | sed '/^port */!d; s///;q'`
+source /etc/profile
+
+ADAPTER_JAVA=${JAVA_HOME}/bin/java
+ADAPTER_PID=${SYNOPKG_PKGDEST}/var/run/media-adapter.pid
+ADAPTER_LOG=${SYNOPKG_PKGDEST}/var/log/media-adapter.log
+ADAPTER_PORT=`cat ${SYNOPKG_PKGDEST}/etc/http.conf | sed '/^port */!d; s///;q'`
 
 running() {
     local PID=`cat "$1" 2>/dev/null` || return 1
@@ -12,20 +14,20 @@ running() {
 
 case $1 in
 	start)
-	    nohup ${JETTY_JAVA} -Xmx64m -jar ${SYNOPKG_PKGDEST}/lib/jetty-runner.jar --port ${JETTY_PORT} ${SYNOPKG_PKGDEST}/etc/jetty-context.xml > ${JETTY_LOG} 2>&1 &
-	    echo $! > ${JETTY_PID}
+	    nohup ${ADAPTER_JAVA} -Xmx48m -jar ${SYNOPKG_PKGDEST}/lib/media-adapter-rest.jar -port ${ADAPTER_PORT} -config ${SYNOPKG_PKGDEST}/etc/media-adapter.xml > ${ADAPTER_LOG} 2>&1 &
+	    echo $! > ${ADAPTER_PID}
 		exit 0
 	;;
 	stop)
-        kill -9 `cat ${JETTY_PID}`
+        kill -9 `cat ${ADAPTER_PID}`
 		exit 0
 	;;
 	status)
-	    if [ -f ${JETTY_PID} ]; then
-            if running ${JETTY_PID}; then
+	    if [ -f ${ADAPTER_PID} ]; then
+            if running ${ADAPTER_PID}; then
                 exit 0
             else
-                rm -f ${JETTY_PID}
+                rm -f ${ADAPTER_PID}
                 exit 1
             fi
         else
@@ -33,7 +35,7 @@ case $1 in
         fi
 	;;
 	log)
-	    echo ${JETTY_LOG}
+	    echo ${ADAPTER_LOG}
 		exit 0
 	;;
 esac

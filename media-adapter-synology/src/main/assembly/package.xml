@@ -60,9 +60,15 @@
             <outputDirectory>lib</outputDirectory>
             <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
             <includes>
-                <include>org.media:media-adapter-web*</include>
-                <include>org.eclipse.jetty:jetty-runner*</include>
+                <include>org.media:media-adapter-rest*</include>
             </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <excludes>
+                <exclude>javax.media:jmf*</exclude>
+                <exclude>org.media:media-adapter-rest*</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
 </assembly>

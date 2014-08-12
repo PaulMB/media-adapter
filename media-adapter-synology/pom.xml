@@ -22,14 +22,13 @@
     <dependencies>
         <dependency>
             <groupId>org.media</groupId>
-            <artifactId>media-adapter-web</artifactId>
+            <artifactId>media-adapter-rest</artifactId>
             <version>0.1-SNAPSHOT</version>
-            <type>war</type>
         </dependency>
         <dependency>
-        	<groupId>org.eclipse.jetty</groupId>
-        	<artifactId>jetty-runner</artifactId>
-        	<version>9.2.1.v20140609</version>
+        	<groupId>javax.servlet</groupId>
+        	<artifactId>javax.servlet-api</artifactId>
+        	<version>3.0.1</version>
         </dependency>
     </dependencies>
 
