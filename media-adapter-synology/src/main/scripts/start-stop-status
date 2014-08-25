@@ -19,7 +19,7 @@ case $1 in
 		exit 0
 	;;
 	stop)
-        kill -9 `cat ${ADAPTER_PID}`
+        kill -TERM `cat ${ADAPTER_PID}`
 		exit 0
 	;;
 	status)
