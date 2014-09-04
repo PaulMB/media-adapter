@@ -145,7 +145,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>${basedir}/target/${project.artifactId}.tar.gz</file>
+                                    <file>${basedir}/target/${project.artifactId}.tar</file>
                                     <type>spk</type>
                                 </artifact>
                             </artifacts>
