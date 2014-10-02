@@ -6,8 +6,9 @@ import org.media.container.exception.MediaReadException;
 import org.media.container.info.Container;
 import org.media.container.info.ContainerFactory;
 import org.media.container.info.Track;
+import org.media.container.info.TrackId;
 import org.media.container.info.TrackType;
-import org.media.container.info.impl.ContainerUtil;
+import org.media.container.info.impl.SampleContainer;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.io.CommandConfiguration;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
-import static org.media.container.info.impl.ContainerUtil.track;
 
 public class MkvMergeCommandBuilderTest {
 
@@ -137,13 +137,13 @@ public class MkvMergeCommandBuilderTest {
 	}
 
 	private static ContainerFactory factory() throws MediaReadException {
-		final List<Track> tracks = new ArrayList<>();
+		final List<Track> tracks = new ArrayList<Track>();
 		tracks.add(track(1, null, "V_MPEG4/ISO/AVC", "jpn", TrackType.VIDEO));
 		tracks.add(track(2, "2ch Vorbis", "A_VORBIS", "jpn", TrackType.AUDIO));
 		tracks.add(track(3, "Styled ASS", "S_TEXT/ASS", null, TrackType.SUBTITLE));
 		tracks.add(track(4, "Srt", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
 		tracks.add(track(5, "2nd Srt", "S_TEXT/UTF8", null, TrackType.SUBTITLE));
-		final Container container = ContainerUtil.container("", 0.0, tracks);
+		final Container container = container("", 0.0, tracks);
 		return new ContainerFactory() {
 			@Override
 			public Container create(URI containerURI) throws MediaReadException {
@@ -154,5 +154,20 @@ public class MkvMergeCommandBuilderTest {
 
 	private static MergeDefinition definition() {
 		return MergeFactory.merge(new File("/a/b/c"), new File("/d/e"));
+	}
+
+	public static Container container(String title, double duration, List<Track> tracks) {
+		return new SampleContainer(title, duration, tracks);
+	}
+
+	public static Track track(long number, String name, String codecId, String language, TrackType trackType) {
+		final Track track = Mockito.mock(Track.class);
+		final TrackId trackId = MergeFactory.trackId(number);
+		Mockito.when(track.getId()).thenReturn(trackId);
+		Mockito.when(track.getName()).thenReturn(name);
+		Mockito.when(track.getCodecId()).thenReturn(codecId);
+		Mockito.when(track.getLanguage()).thenReturn(language);
+		Mockito.when(track.getType()).thenReturn(trackType);
+		return track;
 	}
 }

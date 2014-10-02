@@ -53,6 +53,7 @@
         <module>media-adapter-rest</module>
         <module>media-adapter-synology</module>
         <module>media-adapter-webapp</module>
+        <module>media-adapter-connector</module>
     </modules>
 
     <build>

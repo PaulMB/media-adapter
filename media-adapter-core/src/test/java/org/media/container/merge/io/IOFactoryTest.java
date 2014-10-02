@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,5 +49,45 @@ public class IOFactoryTest {
 		Files.setPosixFilePermissions(destination, new HashSet<>(permissions));
 		IOFactory.copyAttributes(source, destination);
 		assertEquals(Files.getPosixFilePermissions(source), Files.getPosixFilePermissions(destination));
+	}
+
+	@Test
+	public void shouldGetTempFileWithExtension() throws Exception {
+		assertEquals(new File("/tmp/test.flappy.mkv"), IOFactory.appendNameSuffix(new File("/tmp/test.mkv"), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWithoutExtension() throws Exception {
+		assertEquals(new File("/tmp/test.flappy"), IOFactory.appendNameSuffix(new File("/tmp/test"), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWithTrailingDot() throws Exception {
+		assertEquals(new File("/tmp/test.flappy."), IOFactory.appendNameSuffix(new File("/tmp/test."), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWithBeginningDot() throws Exception {
+		assertEquals(new File("/tmp/.flappy.mkv"), IOFactory.appendNameSuffix(new File("/tmp/.mkv"), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWithMultipleDots() throws Exception {
+		assertEquals(new File("/tmp/some.test.flappy.mkv"), IOFactory.appendNameSuffix(new File("/tmp/some.test.mkv"), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWithBeginningAndMultipleDots() throws Exception {
+		assertEquals(new File("/tmp/.test.flappy.mkv"), IOFactory.appendNameSuffix(new File("/tmp/.test.mkv"), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWhenDirContainsDots() throws Exception {
+		assertEquals(new File("/tmp.dir/test.flappy.mkv"), IOFactory.appendNameSuffix(new File("/tmp.dir/test.mkv"), "flappy"));
+	}
+
+	@Test
+	public void shouldGetTempFileWhenOnlyDirContainsDots() throws Exception {
+		assertEquals(new File("/tmp.dir/mkv.flappy"), IOFactory.appendNameSuffix(new File("/tmp.dir/mkv"), "flappy"));
 	}
 }

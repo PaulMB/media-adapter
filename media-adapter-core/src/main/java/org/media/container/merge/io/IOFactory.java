@@ -76,4 +76,14 @@ public class IOFactory {
 		outputView.setOwner(inputAttributes.owner());
 		outputView.setPermissions(inputAttributes.permissions());
 	}
+
+	public static File appendNameSuffix(File input, String nameSuffix) {
+		final String name = input.getName();
+		final int lastDot = name.lastIndexOf('.');
+		if ( lastDot != -1 ) {
+			return new File(input.getParent(), name.substring(0, lastDot) + "." + nameSuffix + "." + name.substring(lastDot + 1));
+		} else {
+			return new File(input.getAbsolutePath() + "." + nameSuffix);
+		}
+	}
 }

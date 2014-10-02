@@ -11,6 +11,7 @@ import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.TrackDefinition;
 import org.media.container.merge.execution.Merge;
+import org.media.container.merge.io.IOFactory;
 import org.media.web.info.TrackDescription;
 
 import javax.inject.Inject;
@@ -94,7 +95,7 @@ public class MergeAdapter {
 
 	private MergeDefinition createMergeDefinition(MergeDescription description) throws MergeDefinitionException, MediaReadException {
 		final File input = this.getInputContainer(description.getInput());
-		final MergeDefinition merge = MergeFactory.merge(input, new File(description.getInput() + '.' + System.currentTimeMillis())).setClustersInMetaSeek(true);
+		final MergeDefinition merge = MergeFactory.merge(input, IOFactory.appendNameSuffix(input, String.valueOf(System.currentTimeMillis()))).setClustersInMetaSeek(true);
 		final List<TrackDescription> tracks = description.getTracksToAdd();
 		if ( tracks == null ) {
 			throw new MergeDefinitionException("no tracks to add specified");
