@@ -6,17 +6,19 @@ Media Adapter
 Purpose
 --------------
 
-Tool to interact with media containers, typically MKV files. In particular, it may be used add tracks like subtitles to an existing container. Includes a package for Synology with a dedicated UI to modify files stored on the NAS.
+Tool to interact with media containers, typically MKV files. In particular, it may be used add or remove tracks to an existing container. Includes Synology package with a dedicated UI to modify files stored on the NAS.
 
 
 Requirements
 --------------
 
-* The version 5 of DiskStation Manager must be installed for the Synology part.
+* A Java 7 installation is mandatory (on Synology, you can get it from [MissileHugger](http://packages.missilehugger.com) or [PCLoadLetter](http://packages.pcloadletter.co.uk/). Make sure `JAVA_HOME` is defined in the environment, for example in the `/etc/profile`)
 
-* A Java 7 installation is mandatory. For Synology, you can get it from [MissileHugger](http://packages.missilehugger.com) or [PCLoadLetter](http://packages.pcloadletter.co.uk/). Make sure `JAVA_HOME` is defined in the environment, for example in the `/etc/profile`.
+* Two connectors are available 
+    * `mkvmerge` (on Synology, you can install the `mkvmerge` binary with `ipkg install mkvtoolnix`)
+    * `ffmpeg` which is used by default (on Synology, you can get it from [Cytec](http://cytec.us/spk/))
 
-* The `mkvmerge` binary must be available. For Synology, you can install it with `ipkg install mkvtoolnix`.
+* The version 5 of DiskStation Manager is required if installed on a Synology .
 
 
 License
