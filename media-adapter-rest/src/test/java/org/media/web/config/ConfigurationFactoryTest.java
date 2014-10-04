@@ -1,12 +1,12 @@
 package org.media.web.config;
 
 import org.junit.Test;
-import org.media.container.merge.execution.impl.mkvmerge.MkvMergeExecutorFactory;
 import org.media.web.authentication.Authenticator;
 import org.media.web.authentication.DSMAuthenticator;
-import org.mockito.Mockito;
+import org.media.web.config.exception.ComponentStorageException;
+import org.media.web.config.impl.XmlComponent;
+import org.media.web.config.impl.XmlConfiguration;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -21,58 +21,54 @@ public class ConfigurationFactoryTest {
 	@Test
 	public void shouldLoadConfiguration() throws Exception {
 		final Path source = Paths.get(ConfigurationFactoryTest.class.getResource("/media-adapter.xml").toURI());
-		final ApplicationConfiguration configuration = ConfigurationFactory.loadConfiguration(source);
-		assertEquals(MkvMergeExecutorFactory.class.getName(), configuration.getExecutorFactory().getClassName());
-		assertEquals("/var/packages/MediaAdapter/target/etc/mkvmerge.xml", configuration.getExecutorFactory().getConfiguration());
-		assertEquals(DSMAuthenticator.class.getName(), configuration.getAuthenticator().getClassName());
-		assertEquals("/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml", configuration.getAuthenticator().getConfiguration());
+		final XmlConfiguration configuration = XmlConfiguration.create(source);
+		final XmlComponent authenticator = configuration.getAuthenticator();
+		assertEquals(2, configuration.getExecutors().getExecutors().size());
+		assertEquals("ffmpeg", configuration.getExecutors().getActive());
+		final XmlComponent firstComponent = configuration.getExecutors().getExecutors().get(0);
+		final XmlComponent secondComponent = configuration.getExecutors().getExecutors().get(1);
+		assertEquals("org.media.container.merge.execution.impl.ffmpeg.FFMpegExecutorFactory", firstComponent.getClassName());
+		assertEquals("/var/packages/MediaAdapter/target/etc/ffmpeg.xml", firstComponent.getConfiguration());
+		assertEquals("org.media.container.merge.execution.impl.mkvmerge.MkvMergeExecutorFactory", secondComponent.getClassName());
+		assertEquals("/var/packages/MediaAdapter/target/etc/mkvmerge.xml", secondComponent.getConfiguration());
+		assertEquals("org.media.web.authentication.DSMAuthenticator", authenticator.getClassName());
+		assertEquals("/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml", authenticator.getConfiguration());
 	}
 
-	@Test(expected = IOException.class)
+	@Test(expected = ComponentStorageException.class)
 	public void shouldNotLoadInvalidConfiguration() throws Exception {
 		final Path source = Paths.get(ConfigurationFactoryTest.class.getResource("/invalid.media-adapter.xml").toURI());
-		ConfigurationFactory.loadConfiguration(source);
+		ConfigurationFactory.loadConfiguration("xml:" + source.toString());
 	}
 
 	@Test(expected = Exception.class)
 	public void shouldNotCreateComponentWithClassMismatch() throws Exception {
-		ConfigurationFactory.createComponent(component(String.class.getName(), null), Integer.class);
+		XmlComponent.createComponent(String.class.getName(), null, Integer.class);
 	}
 
 	@Test(expected = Exception.class)
 	public void shouldNotCreateComponentWithNoPathConstructor() throws Exception {
-		ConfigurationFactory.createComponent(component(Integer.class.getName(), "/tmp"), Integer.class);
+		XmlComponent.createComponent(Integer.class.getName(), "/tmp", Integer.class);
 	}
 
 	@Test
 	public void shouldCreateComponentIfEmptyConstructorIsFound() throws Exception {
-		ConfigurationFactory.createComponent(component(String.class.getName(), null), String.class);
+		XmlComponent.createComponent(String.class.getName(), null, String.class);
 	}
 
 	@Test(expected = Exception.class)
 	public void shouldNotCreateWithNoEmptyConstructorIfNoPathIsSpecified() throws Exception {
-		ConfigurationFactory.createComponent(component(DSMAuthenticator.class.getName(), null), Authenticator.class);
+		XmlComponent.createComponent(DSMAuthenticator.class.getName(), null, Authenticator.class);
 	}
 
 	@Test(expected = Exception.class)
 	public void shouldNotCreateWithInvalidPath() throws Exception {
-		ConfigurationFactory.createComponent(component(DSMAuthenticator.class.getName(), "/media-adapter.xml"), Authenticator.class);
+		XmlComponent.createComponent(DSMAuthenticator.class.getName(), "/media-adapter.xml", Authenticator.class);
 	}
 
 	@Test
 	public void shouldCreateComponentIfConstructorWithPathIsFound() throws Exception {
 		final Path source = Paths.get(ConfigurationFactoryTest.class.getResource("/component.xml").toURI());
-		ConfigurationFactory.createComponent(component(DSMAuthenticator.class.getName(), source.toString()), Authenticator.class);
-	}
-
-	//==================================================================================================================
-	// Private methods
-	//==================================================================================================================
-
-	private static ApplicationComponent component(String className, String configuration) {
-		final ApplicationComponent mock = Mockito.mock(ApplicationComponent.class);
-		Mockito.when(mock.getClassName()).thenReturn(className);
-		Mockito.when(mock.getConfiguration()).thenReturn(configuration);
-		return mock;
+		XmlComponent.createComponent(DSMAuthenticator.class.getName(), source.toString(), Authenticator.class);
 	}
 }

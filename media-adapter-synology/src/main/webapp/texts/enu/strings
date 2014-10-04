@@ -48,3 +48,16 @@ reset = "Reset"
 
 [chooser]
 title = "Input selection"
+
+[config]
+menu = "Settings"
+global = "General"
+executor = "Executor"
+
+[command]
+binary = "Binary path"
+environment = "Environment"
+name = "Name"
+value = "Value"
+add = "Add"
+remove = "Remove"

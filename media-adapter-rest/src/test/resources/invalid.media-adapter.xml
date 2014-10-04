@@ -1,6 +1,11 @@
 <media-adapter>
-    <executor-factory class="org.media.container.merge.execution.impl.mkvmerge.MkvMergeExecutorFactory"
-                      configuration="/var/packages/MediaAdapter/target/etc/mkvmerge.xml"/>
-    <authenticator class="org.media.web.authentication.DSMAuthenticator"
-                   configuration="/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml"></authenticate>
+    <executors active="ffmpeg">
+        <executor name="ffmpeg"
+                  class="org.media.container.merge.execution.impl.ffmpeg.FFMpegExecutorFactory"
+                  configuration="/var/packages/MediaAdapter/target/etc/ffmpeg.xml"/>
+    </executors>
+    <authenticator name="dsm"
+                   class="org.media.web.authentication.DSMAuthenticator"
+                   configuration="/var/packages/MediaAdapter/target/etc/dsm-authenticator.xml">
+    </authenticate>
 </media-adapter>

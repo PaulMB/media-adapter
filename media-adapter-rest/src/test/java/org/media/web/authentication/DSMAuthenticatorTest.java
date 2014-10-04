@@ -6,6 +6,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
+import org.media.container.config.Configuration;
 import org.media.container.merge.execution.Merge;
 import org.media.container.merge.io.CommandConfiguration;
 import org.media.web.authentication.exception.AuthenticationException;
@@ -158,5 +159,10 @@ public class DSMAuthenticatorTest extends JerseyTest implements Authenticator {
 	@Override
 	public void authenticate(ContainerRequestContext requestContext) throws AuthenticationException {
 		this.authenticator.authenticate(requestContext);
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return this.authenticator.getConfiguration();
 	}
 }

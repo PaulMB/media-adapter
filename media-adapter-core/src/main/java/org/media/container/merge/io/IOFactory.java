@@ -3,14 +3,16 @@ package org.media.container.merge.io;
 import org.media.container.merge.io.impl.AccentRemover;
 import org.media.container.merge.io.impl.CharacterTrackWriter;
 import org.media.container.merge.io.impl.CharsetDetector;
-import org.media.container.merge.io.impl.XmlCommandConfiguration;
+import org.media.container.merge.io.impl.CommandConfigurationImpl;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,7 +57,7 @@ public class IOFactory {
 
 	public static CommandConfiguration loadConfiguration(Path configurationPath) throws IOException {
 		try {
-			final JAXBContext context = JAXBContext.newInstance(XmlCommandConfiguration.class);
+			final JAXBContext context = JAXBContext.newInstance(CommandConfigurationImpl.class);
 			final Unmarshaller marshaller = context.createUnmarshaller();
 			try (InputStream inputStream = Files.newInputStream(configurationPath)) {
 				final CommandConfiguration configuration = (CommandConfiguration) marshaller.unmarshal(inputStream);
@@ -67,6 +69,10 @@ public class IOFactory {
 		} catch (JAXBException e) {
 			throw new IOException(e.getMessage(), e);
 		}
+	}
+
+	public static CommandConfiguration createConfiguration(String binaryPath) {
+		return new CommandConfigurationImpl(binaryPath);
 	}
 
 	public static void copyAttributes(Path source, Path destination) throws IOException {
@@ -84,6 +90,17 @@ public class IOFactory {
 			return new File(input.getParent(), name.substring(0, lastDot) + "." + nameSuffix + "." + name.substring(lastDot + 1));
 		} else {
 			return new File(input.getAbsolutePath() + "." + nameSuffix);
+		}
+	}
+
+	public static <T> void save(T object, Path outputPath) throws IOException {
+		try (OutputStream outputStream = Files.newOutputStream(outputPath)){
+			final JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+		 	final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		 	jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		 	jaxbMarshaller.marshal(object, outputStream);
+		} catch (JAXBException e) {
+			throw new IOException(e.getMessage(), e);
 		}
 	}
 }

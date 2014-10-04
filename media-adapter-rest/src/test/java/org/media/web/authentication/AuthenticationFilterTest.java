@@ -4,6 +4,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
+import org.media.container.config.Configuration;
 import org.media.web.authentication.exception.AuthenticationException;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -38,6 +39,11 @@ public class AuthenticationFilterTest extends JerseyTest {
 		@Override
 		public void authenticate(ContainerRequestContext requestContext) throws AuthenticationException {
 			throw new AuthenticationException("Not authorized");
+		}
+
+		@Override
+		public Configuration getConfiguration() {
+			return null;
 		}
 	}
 }

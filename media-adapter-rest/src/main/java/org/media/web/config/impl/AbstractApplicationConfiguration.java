@@ -1,46 +1,41 @@
 package org.media.web.config.impl;
 
-import org.media.web.config.ApplicationComponent;
+import org.media.container.config.Listener;
+import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.web.config.ApplicationConfiguration;
 
-import javax.xml.bind.annotation.XmlAttribute;
+import java.util.ArrayList;
+import java.util.List;
 
-@SuppressWarnings("UnusedDeclaration")
-public class XmlApplicationComponent implements ApplicationComponent {
+abstract public class AbstractApplicationConfiguration implements ApplicationConfiguration, Listener<MergeExecutorFactory> {
 
 	//==================================================================================================================
 	// Attributes
 	//==================================================================================================================
 
-	private String className;
-	private String configuration;
+	private final List<Listener<MergeExecutorFactory>> listeners;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
-	public XmlApplicationComponent() {
-		// Nothing
+	protected AbstractApplicationConfiguration() {
+		this.listeners = new ArrayList<>();
 	}
 
 	//==================================================================================================================
 	// Public methods
 	//==================================================================================================================
 
-	@XmlAttribute(name = "class")
-	public String getClassName() {
-		return className;
+	@Override
+	public void addListener(Listener<MergeExecutorFactory> listener) {
+		this.listeners.add(listener);
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	@XmlAttribute(name = "configuration")
-	public String getConfiguration() {
-		return configuration;
-	}
-
-	public void setConfiguration(String configuration) {
-		this.configuration = configuration;
+	@Override
+	public void onChange(MergeExecutorFactory factory) {
+		for (Listener<MergeExecutorFactory> listener : listeners) {
+			listener.onChange(factory);
+		}
 	}
 }

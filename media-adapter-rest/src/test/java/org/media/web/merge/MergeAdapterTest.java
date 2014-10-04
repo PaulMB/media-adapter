@@ -2,6 +2,7 @@ package org.media.web.merge;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.InboundEvent;
@@ -12,10 +13,12 @@ import org.json.simple.JSONValue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.media.container.config.Configuration;
 import org.media.container.info.TrackType;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.execution.MergeExecutor;
 import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.container.merge.execution.impl.ThreadedMergeCollector;
 import org.media.web.authentication.Authenticator;
 import org.media.web.authentication.NoAuthentication;
 import org.media.web.info.TrackDescription;
@@ -76,7 +79,7 @@ public class MergeAdapterTest extends JerseyTest {
 	protected Application configure() {
 		final ResourceConfig application = new ResourceConfig();
 		final MergeExecutorFactory factory = new TestFactory();
-		final MergeContext context = new MergeContext(factory);
+		final MergeContext context = new MergeContext(new ThreadedMergeCollector(factory));
 		application.register(new AbstractBinder() {
 			@Override
 			protected void configure() {
@@ -86,6 +89,7 @@ public class MergeAdapterTest extends JerseyTest {
 		});
 		application.register(MultiPartFeature.class);
 		application.register(MergeAdapter.class);
+		application.register(JacksonFeature.class);
 		application.packages("org.media.web");
 		return application;
 	}
@@ -325,6 +329,11 @@ public class MergeAdapterTest extends JerseyTest {
 			} else {
 				return executor;
 			}
+		}
+
+		@Override
+		public Configuration getConfiguration() {
+			return null;
 		}
 	}
 

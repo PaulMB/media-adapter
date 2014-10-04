@@ -1,4 +1,0 @@
-<media-adapter>
-    <executor-factory class="org.media.container.merge.execution.impl.mkvmerge.MkvMergeExecutorFactory" configuration="src/test/resources/mkvmerge.xml"/>
-    <authenticator class="org.media.web.authentication.NoAuthentication"/>
-</media-adapter>

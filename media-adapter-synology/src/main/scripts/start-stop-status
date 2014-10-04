@@ -14,7 +14,7 @@ running() {
 
 case $1 in
 	start)
-	    nohup ${ADAPTER_JAVA} -Xmx48m -jar ${SYNOPKG_PKGDEST}/lib/media-adapter-rest.jar -port ${ADAPTER_PORT} -config ${SYNOPKG_PKGDEST}/etc/media-adapter.xml > ${ADAPTER_LOG} 2>&1 &
+	    nohup ${ADAPTER_JAVA} -Xmx48m -jar ${SYNOPKG_PKGDEST}/lib/media-adapter-rest.jar -port ${ADAPTER_PORT} -config xml:${SYNOPKG_PKGDEST}/etc/media-adapter.xml > ${ADAPTER_LOG} 2>&1 &
 	    echo $! > ${ADAPTER_PID}
 		exit 0
 	;;

@@ -3,9 +3,9 @@
 var TrackRecord = Ext.data.Record.create([
     {name: 'path'},
     {name: 'name'},
-    {codecId: 'codecId'},
-    {language: 'language'},
-    {trackType: 'trackType'}
+    {name: 'codecId'},
+    {name: 'language'},
+    {name: 'trackType'}
 ]);
 
 Ext.define('Media.adapter.grid.TrackGrid', {

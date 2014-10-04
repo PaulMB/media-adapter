@@ -5,6 +5,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.media.container.config.Configuration;
 import org.media.container.merge.io.CommandConfiguration;
 import org.media.container.merge.io.IOFactory;
 import org.media.web.authentication.exception.AuthenticationException;
@@ -102,5 +103,10 @@ public class DSMAuthenticator implements Authenticator, DSMExecutorFactory {
 			}
 		}
 		throw new AuthenticationException("No header named " + headerName);
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return configuration;
 	}
 }

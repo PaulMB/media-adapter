@@ -5,10 +5,8 @@ import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 import org.media.container.merge.execution.Merge;
 import org.media.container.merge.execution.MergeCollector;
-import org.media.container.merge.execution.MergeExecutorFactory;
 import org.media.container.merge.execution.MergeListener;
 import org.media.container.merge.execution.MergeOperation;
-import org.media.container.merge.execution.impl.ThreadedMergeCollector;
 import org.media.web.merge.listener.ContainerRename;
 
 import javax.ws.rs.core.MediaType;
@@ -26,8 +24,8 @@ public class MergeContext implements MergeListener {
 	// Constructors
 	//==================================================================================================================
 
-	public MergeContext(MergeExecutorFactory factory) {
-		collector = new ThreadedMergeCollector(factory);
+	public MergeContext(MergeCollector mergeCollector) {
+		collector = mergeCollector;
 		collector.addMergeListener(this);
 		collector.addMergeListener(new ContainerRename());
 		broadcaster = new SseBroadcaster();

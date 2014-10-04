@@ -1,5 +1,6 @@
 package org.media.container.merge.execution.impl;
 
+import org.media.container.config.Listener;
 import org.media.container.exception.MergeCancelException;
 import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
@@ -23,7 +24,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class ThreadedMergeCollector implements MergeCollector, MergeListener {
+public class ThreadedMergeCollector implements MergeCollector, MergeListener, Listener<MergeExecutorFactory> {
 
 	//==================================================================================================================
 	// Attributes
@@ -32,7 +33,7 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 	private final List<MergeListener> listeners;
 	private final ThreadPoolExecutor executorService;
 	private final Map<MergeId, MergeTask> merges;
-	private final MergeExecutorFactory executorFactory;
+	private MergeExecutorFactory executorFactory;
 
 	//==================================================================================================================
 	// Constructors
@@ -108,6 +109,11 @@ public class ThreadedMergeCollector implements MergeCollector, MergeListener {
 		if ( merge.getStatus() == MergeStatus.COMPLETED ) {
 			this.removeMergeTask(merge);
 		}
+	}
+
+	@Override
+	public void onChange(MergeExecutorFactory change) {
+		this.executorFactory = change;
 	}
 
 	//==================================================================================================================

@@ -1,6 +1,7 @@
 package org.media.container.merge.execution.impl;
 
 import org.junit.Test;
+import org.media.container.config.Configuration;
 import org.media.container.exception.MergeCancelException;
 import org.media.container.exception.MergeDefinitionException;
 import org.media.container.exception.MergeNotFoundException;
@@ -313,6 +314,11 @@ public class ThreadedMergeCollectorTest {
 		@Override
 		public MergeExecutor create(MergeDefinition definition) {
 			return executors.remove(0);
+		}
+
+		@Override
+		public Configuration getConfiguration() {
+			return null;
 		}
 	}
 }

@@ -1,45 +1,46 @@
-package org.media.container.merge.io.impl;
+package org.media.web.config.impl;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.XmlElement;
+import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
-public class XmlEnvironmentVariable {
+public class XmlComponents {
 
 	//==================================================================================================================
 	// Attributes
 	//==================================================================================================================
 
-	private String name;
-	private String value;
+	private String active;
+	private List<XmlComponent> executors;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
-	public XmlEnvironmentVariable() {
-		//Empty
+	public XmlComponents() {
+		// Nothing
 	}
 
 	//==================================================================================================================
 	// Public methods
 	//==================================================================================================================
 
-	@XmlAttribute(name = "name")
-	public String getName() {
-		return name;
+	@XmlElement(name = "executor")
+	public List<XmlComponent> getExecutors() {
+		return executors;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setExecutors(List<XmlComponent> executors) {
+		this.executors = executors;
 	}
 
-	@XmlValue
-	public String getValue() {
-		return value;
+	@XmlAttribute(name = "active")
+	public String getActive() {
+		return active;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setActive(String active) {
+		this.active = active;
 	}
 }

@@ -6,10 +6,11 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.execution.MergeExecutor;
+import org.media.container.merge.io.ByteBufferOutputStream;
 import org.media.container.merge.io.IOFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class CommandExecutor implements MergeExecutor {
 	// Attributes
 	//==================================================================================================================
 
-	private final ByteArrayOutputStream outputStream;
+	private final OutputStream outputStream;
 	private final DefaultExecutor executor;
 	private final ExecuteWatchdog watchdog;
 	private final MergeDefinition definition;
@@ -34,7 +35,7 @@ public class CommandExecutor implements MergeExecutor {
 		this.environment = commandEnv;
 		definition = mergeDefinition;
 		builder = commandLineBuilder;
-		outputStream = new ByteArrayOutputStream();
+		outputStream = new ByteBufferOutputStream(2 * 1000);
 		watchdog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
 		executor = new DefaultExecutor();
 		executor.setExitValue(0);

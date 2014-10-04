@@ -1,8 +1,25 @@
 package org.media.web.config;
 
-public interface ApplicationConfiguration {
+import org.media.container.config.Configuration;
+import org.media.container.config.ListenerCollector;
+import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.web.authentication.Authenticator;
+import org.media.web.config.exception.ComponentNotFoundException;
+import org.media.web.config.exception.ComponentStorageException;
 
-	ApplicationComponent getExecutorFactory();
+import java.util.List;
 
-	ApplicationComponent getAuthenticator();
+public interface ApplicationConfiguration extends ListenerCollector<MergeExecutorFactory> {
+
+	List<String> getExecutors();
+
+	MergeExecutorFactory getExecutor(String name) throws ComponentNotFoundException;
+
+	void setExecutorConfiguration(String name, Configuration configuration) throws ComponentNotFoundException, ComponentStorageException;
+
+	String getActiveExecutor();
+
+	void setActiveExecutor(String name) throws ComponentNotFoundException, ComponentStorageException;
+
+	Authenticator getAuthenticator();
 }

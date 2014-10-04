@@ -1,5 +1,6 @@
 package org.media.container.merge.execution.impl.ffmpeg;
 
+import org.media.container.config.Configuration;
 import org.media.container.info.impl.jebml.JEBMLContainerFactory;
 import org.media.container.merge.MergeDefinition;
 import org.media.container.merge.execution.MergeExecutor;
@@ -39,5 +40,10 @@ public class FFMpegExecutorFactory implements MergeExecutorFactory {
 	@Override
 	public MergeExecutor create(MergeDefinition definition) {
 		return new CommandExecutor(definition, configuration.getEnvironment(), new FFMpegCommandBuilder(configuration, new JEBMLContainerFactory()));
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return configuration;
 	}
 }

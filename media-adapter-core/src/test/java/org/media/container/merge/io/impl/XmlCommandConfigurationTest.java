@@ -19,7 +19,6 @@ public class XmlCommandConfigurationTest {
 		final Path source = Paths.get(XmlCommandConfigurationTest.class.getResource("/org/media/container/merge/io/impl/xml/config.xml").toURI());
 		final CommandConfiguration config = IOFactory.loadConfiguration(source);
 		assertEquals("/bin/sh", config.getBinary().toString());
-		assertEquals("/tmp", config.getWorkDirectory().toString());
 		final Map<String, String> environment = new HashMap<>();
 		environment.put("LANG", "C");
 		environment.put("LC_ALL", "C");
@@ -31,7 +30,6 @@ public class XmlCommandConfigurationTest {
 		final Path source = Paths.get(XmlCommandConfigurationTest.class.getResource("/org/media/container/merge/io/impl/xml/partial.config.xml").toURI());
 		final CommandConfiguration config = IOFactory.loadConfiguration(source);
 		assertEquals("/bin/sh", config.getBinary().toString());
-		assertEquals("/tmp", config.getWorkDirectory().toString());
 	}
 
 	@Test(expected = IOException.class)

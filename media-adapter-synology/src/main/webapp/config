@@ -21,6 +21,7 @@
             "depend":[
                 "Media.adapter.form.MainPanel",
                 "Media.adapter.grid.MergeGrid",
+                "Media.adapter.tab.ConfigurationPanel",
                 "Media.adapter.util.AppUtil"
             ]
         },
@@ -35,6 +36,11 @@
             "depend":[
                 "Media.adapter.util.AppUtil",
                 "Media.adapter.store.MergeStore"
+            ]
+        },
+        "Media.adapter.tab.ConfigurationPanel":{
+            "depend":[
+                "Media.adapter.form.GlobalConfigurationPanel"
             ]
         },
         "Media.adapter.grid.TrackGrid":{

@@ -2,6 +2,7 @@ package org.media.web.info;
 
 import junit.framework.Assert;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -13,6 +14,7 @@ import org.media.container.info.TrackType;
 import org.media.container.info.impl.jebml.JEBMLContainerFactory;
 import org.media.container.merge.MergeFactory;
 import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.container.merge.execution.impl.ThreadedMergeCollector;
 import org.media.web.authentication.Authenticator;
 import org.media.web.authentication.NoAuthentication;
 import org.media.web.merge.MergeAdapter;
@@ -44,13 +46,14 @@ public class ContainerInfoTest extends JerseyTest {
 	protected Application configure() {
 		final MergeExecutorFactory factory = Mockito.mock(MergeExecutorFactory.class);
 		final ResourceConfig application = new ResourceConfig();
+		application.register(JacksonFeature.class);
 		application.register(MultiPartFeature.class);
 		application.register(MergeAdapter.class);
 		application.packages("org.media.web");
 		application.register(new AbstractBinder() {
 			@Override
 			protected void configure() {
-				bind(new MergeContext(factory)).to(MergeContext.class);
+				bind(new MergeContext(new ThreadedMergeCollector(factory))).to(MergeContext.class);
 				bind(new NoAuthentication()).to(Authenticator.class);
 				bind(new JEBMLContainerFactory()).to(ContainerFactory.class);
 			}

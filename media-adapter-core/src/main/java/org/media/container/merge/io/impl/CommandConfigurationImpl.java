@@ -1,5 +1,6 @@
 package org.media.container.merge.io.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.media.container.merge.io.CommandConfiguration;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -8,28 +9,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("UnusedDeclaration")
 @XmlRootElement(name = "command-configuration")
-public class XmlCommandConfiguration implements CommandConfiguration {
+public class CommandConfigurationImpl implements CommandConfiguration {
 
 	//==================================================================================================================
 	// Attributes
 	//==================================================================================================================
 
 	private String binaryPath;
-	private String workDirectoryPath;
-	private List<XmlEnvironmentVariable> environmentVariables;
+	private Map<String, String> environmentVariables;
 
 	//==================================================================================================================
 	// Constructors
 	//==================================================================================================================
 
-	public XmlCommandConfiguration() {
-		// Empty
+	public CommandConfigurationImpl() {
+		this.environmentVariables = new HashMap<>();
+	}
+
+	public CommandConfigurationImpl(String binary) {
+		this();
+		this.binaryPath = binary;
 	}
 
 	//==================================================================================================================
@@ -45,23 +51,22 @@ public class XmlCommandConfiguration implements CommandConfiguration {
 		this.binaryPath = binaryPath;
 	}
 
-	@XmlElement(name = "work-directory")
-	public String getWorkDirectoryPath() {
-		return workDirectoryPath;
-	}
-
-	public void setWorkDirectoryPath(String workDirectoryPath) {
-		this.workDirectoryPath = workDirectoryPath;
-	}
-
 	@XmlElementWrapper(name = "environment")
 	@XmlElement(name = "variable")
-	public List<XmlEnvironmentVariable> getEnvironmentVariables() {
-		return environmentVariables;
+	@JsonProperty("environment")
+	public List<EnvironmentVariable> getEnvironmentVariables() {
+		final List<EnvironmentVariable> variables = new ArrayList<>();
+		for (String key : environmentVariables.keySet()) {
+			variables.add(new EnvironmentVariable(key, environmentVariables.get(key)));
+		}
+		return variables;
 	}
 
-	public void setEnvironmentVariables(List<XmlEnvironmentVariable> environmentVariables) {
-		this.environmentVariables = environmentVariables;
+	public void setEnvironmentVariables(List<EnvironmentVariable> variables) {
+		this.environmentVariables.clear();
+		for (EnvironmentVariable environmentVariable : variables) {
+			this.environmentVariables.put(environmentVariable.getName(), environmentVariable.getValue());
+		}
 	}
 
 	@Override
@@ -72,20 +77,7 @@ public class XmlCommandConfiguration implements CommandConfiguration {
 
 	@Override
 	@XmlTransient
-	public Path getWorkDirectory() {
-		return this.getWorkDirectoryPath() == null ? null : Paths.get(this.getWorkDirectoryPath());
-	}
-
-	@Override
-	@XmlTransient
 	public Map<String, String> getEnvironment() {
-		final Map<String, String> environment = new HashMap<>();
-		if ( environmentVariables == null ) {
-			return environment;
-		}
-		for (XmlEnvironmentVariable variable : environmentVariables) {
-			environment.put(variable.getName(), variable.getValue());
-		}
-		return environment;
+		return this.environmentVariables;
 	}
 }

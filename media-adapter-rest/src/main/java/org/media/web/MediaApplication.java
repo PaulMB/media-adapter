@@ -8,11 +8,12 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.media.container.info.ContainerFactory;
 import org.media.container.info.impl.jebml.JEBMLContainerFactory;
-import org.media.container.merge.execution.MergeExecutorFactory;
+import org.media.container.merge.execution.impl.ThreadedMergeCollector;
 import org.media.web.authentication.Authenticator;
 import org.media.web.config.ApplicationConfiguration;
 import org.media.web.config.ConfigurationFactory;
@@ -21,7 +22,6 @@ import org.media.web.merge.MergeContext;
 
 import javax.ws.rs.ApplicationPath;
 import java.net.URI;
-import java.nio.file.Paths;
 
 @ApplicationPath("")
 public class MediaApplication extends ResourceConfig {
@@ -37,15 +37,17 @@ public class MediaApplication extends ResourceConfig {
 
 	public MediaApplication(String configurationPath) throws Exception {
 		this.register(MultiPartFeature.class);
+		this.register(JacksonFeature.class);
 		this.packages(true, "org.media.web");
-		final ApplicationConfiguration configuration = ConfigurationFactory.loadConfiguration(Paths.get(configurationPath));
-		final MergeExecutorFactory executorFactory = ConfigurationFactory.createComponent(configuration.getExecutorFactory(), MergeExecutorFactory.class);
-		final Authenticator authenticator = ConfigurationFactory.createComponent(configuration.getAuthenticator(), Authenticator.class);
+		final ApplicationConfiguration configuration = ConfigurationFactory.loadConfiguration(configurationPath);
+		final ThreadedMergeCollector collector = new ThreadedMergeCollector(configuration.getExecutor(configuration.getActiveExecutor()));
+		configuration.addListener(collector);
 		this.register(new AbstractBinder() {
 			@Override
 			protected void configure() {
-				bind(new MergeContext(executorFactory)).to(MergeContext.class);
-				bind(authenticator).to(Authenticator.class);
+				bind(configuration).to(ApplicationConfiguration.class);
+				bind(new MergeContext(collector)).to(MergeContext.class);
+				bind(configuration.getAuthenticator()).to(Authenticator.class);
 				bind(new JEBMLContainerFactory()).to(ContainerFactory.class);
 			}
 		});
