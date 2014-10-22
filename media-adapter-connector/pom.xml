@@ -4,10 +4,10 @@
     <parent>
         <artifactId>media-adapter</artifactId>
         <groupId>org.media</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2</version>
     </parent>
     <artifactId>media-adapter-connector</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>pom</packaging>
     <name>media-adapter-connector</name>
     <modules>

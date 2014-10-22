@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.media</groupId>
     <artifactId>media-adapter</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <packaging>pom</packaging>
     <name>media-adapter</name>
     <description>Tool to interact with media containers, typically MKV files. In particular, it may be used add tracks like subtitles to an existing container</description>
@@ -26,7 +26,7 @@
         <connection>scm:git:https://github.com/PaulMB/media-adapter.git</connection>
         <developerConnection>scm:git:git@github.com:PaulMB/media-adapter.git</developerConnection>
         <url>https://github.com/PaulMB/media-adapter</url>
-        <tag>HEAD</tag>
+        <tag>v0.2</tag>
     </scm>
 
     <distributionManagement>
