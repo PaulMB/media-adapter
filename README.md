@@ -21,6 +21,12 @@ Requirements
 * The version 5 of DiskStation Manager is required if installed on a Synology .
 
 
+Download
+--------------
+
+SPK files can be downloaded from [Bintray](https://bintray.com/paulmb/maven/media-adapter/view/files/org/media/MediaAdapter)   
+
+
 License
 --------------
 
