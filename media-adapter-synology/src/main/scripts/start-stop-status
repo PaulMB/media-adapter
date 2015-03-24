@@ -16,6 +16,10 @@ case $1 in
 	start)
 	    nohup ${ADAPTER_JAVA} -Xmx48m -jar ${SYNOPKG_PKGDEST}/lib/media-adapter-rest.jar -port ${ADAPTER_PORT} -config xml:${SYNOPKG_PKGDEST}/etc/media-adapter.xml > ${ADAPTER_LOG} 2>&1 &
 	    echo $! > ${ADAPTER_PID}
+	    if [ ! -f /etc/httpd/sites-enabled/Media.Adapter.legacy.conf ]; then
+	        ln -s ${SYNOPKG_PKGDEST}/etc/Media.Adapter.legacy.conf /etc/httpd/sites-enabled/
+            sleep 5 && synoservicecfg --restart httpd-sys &
+	    fi
 		exit 0
 	;;
 	stop)

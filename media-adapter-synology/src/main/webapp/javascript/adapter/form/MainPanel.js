@@ -135,9 +135,9 @@ Ext.define('Media.adapter.form.MainPanel', {
                 me.resetInfo();
                 me.appWin.selectPage('Media.adapter.grid.MergeGrid');
             },
-            failure: function (responseObject) {
+            failure: function () {
                 me.appWin.clearStatusBusy();
-                me.appWin.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), responseObject.responseText);
+                me.appWin.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), Media.adapter.util.AppUtil.msg('edit', 'error'));
             }
         });
     },
@@ -152,9 +152,9 @@ Ext.define('Media.adapter.form.MainPanel', {
                 parentWindow.clearStatusBusy();
                 me.setContainerInfo(path, Ext.decode(responseObject.responseText));
             },
-            failure: function(responseObject) {
+            failure: function() {
                 parentWindow.clearStatusBusy();
-                parentWindow.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), responseObject.responseText);
+                parentWindow.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), Media.adapter.util.AppUtil.msg('info', 'error'));
             }
         });
     }

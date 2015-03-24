@@ -14,6 +14,7 @@ name = "Name"
 type = "Type"
 add = "Add"
 close = "Close"
+error = "Could not submit merge task"
 
 [type]
 subtitle = "Subtitle"
@@ -26,6 +27,7 @@ remove = "Remove"
 input = "Input"
 status = "Status"
 message = "Message"
+error = "Could not remove task"
 
 [track]
 title = "Tracks"
@@ -45,6 +47,7 @@ duration = "Duration"
 load = "Loading"
 merge = "Merge"
 reset = "Reset"
+error = "Could not retrieve file information"
 
 [chooser]
 title = "Input selection"
@@ -53,6 +56,8 @@ title = "Input selection"
 menu = "Settings"
 global = "General"
 executor = "Executor"
+save_error = "Could not change active executor"
+load_error = "Could not load executor configuration"
 
 [command]
 binary = "Binary path"
@@ -61,3 +66,4 @@ name = "Name"
 value = "Value"
 add = "Add"
 remove = "Remove"
+error = "Could not update command configuration"

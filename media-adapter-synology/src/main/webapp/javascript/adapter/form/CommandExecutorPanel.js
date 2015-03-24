@@ -47,9 +47,9 @@ Ext.define('Media.adapter.form.CommandExecutorPanel', {
             success: function (responseObject) {
                 parentWindow.clearStatusBusy();
             },
-            failure: function (responseObject) {
+            failure: function () {
                 parentWindow.clearStatusBusy();
-                parentWindow.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), responseObject.responseText);
+                parentWindow.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), Media.adapter.util.AppUtil.msg('command', 'error'));
             }
         });
     },

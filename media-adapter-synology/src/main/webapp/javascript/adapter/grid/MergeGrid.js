@@ -21,9 +21,9 @@ Ext.define('Media.adapter.grid.MergeGrid', {
                             parentWindow.clearStatusBusy();
                             me.reloadStatus();
                         },
-                        failure: function(responseObject) {
+                        failure: function() {
                             parentWindow.clearStatusBusy();
-                            parentWindow.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), responseObject.responseText);
+                            parentWindow.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), Media.adapter.util.AppUtil.msg('work', 'error'));
                         }
                     });
                 }

@@ -27,9 +27,9 @@ Ext.define('Media.adapter.tab.ConfigurationPanel', {
                 me.createTabsIfNecessary(config);
                 me.setTabsConfiguration(config);
             },
-            failure: function (responseObject) {
+            failure: function () {
                 me.appWin.clearStatusBusy();
-                me.appWin.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), responseObject.responseText);
+                me.appWin.getMsgBox().alert(Media.adapter.util.AppUtil.msg('app', 'app_name'), Media.adapter.util.AppUtil.msg('config', 'load_error'));
             }
         });
     },
